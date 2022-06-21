@@ -1,11 +1,12 @@
 from aiohttp import web
-#from deeppavlov import build_model
 import os
 import uuid
 import asyncio
 import wave
 import websockets
 import json
+import openai
+import requests
 
 
 def accept_feature_extractor(phrases, accept):
@@ -54,40 +55,185 @@ async def stt(uri, file_name):
         return ' '.join(phrases)
 
 
+def tts(tts_text, filename):
+    tts_server = os.environ.get('TTS_SERVER', '')
+    data={'text': tts_text}
+    request_str = json.dumps(data)
+    response = requests.post(tts_server+'/inference', json=request_str)
+    # Save response as audio file
+    with open(filename+".wav", "wb") as f:
+        f.write(response.content)
+
+
+def text_davinci(prompt, stop_words):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    return json.loads(str(openai.Completion.create(
+      engine="text-davinci-002",
+      prompt=prompt,
+      temperature=0.9,
+      max_tokens=150,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0.6,
+      stop=stop_words
+    )))
+
+
 async def call_test(request):
         content = "get ok"
         return web.Response(text=content, content_type="text/html")
 
 
-async def call_voice(request):        
-        # get voice file from post request
-        reader = await request.multipart()
-        field = await reader.next()
-        # filename = field.filename
-        # generate a random token for the filename
-        filename = str(uuid.uuid4())
+def load_default_config(user_id):
+    conf_path = 'user_conf/'
+    with open(conf_path+'config.json', 'r') as f:
+        config = json.load(f)
+    return config
+
+
+def read_config(user_id):
+    conf_path = 'user_conf/'
+    # if user.json conf not in user_conf folder, create it
+    # default config file: config.json
+    if not os.path.exists(conf_path+user_id+'.json'):
+        #with open(conf_path+'config.json', 'r') as f:
+        #    config = json.load(f)
+        config = load_default_config(user_id)
+    else:
+        with open(conf_path+user_id+'.json', 'r') as f:
+            config = json.load(f)
+    return config
+
+def save_config(config, user_id):
+    # user configuration
+    conf_path = 'user_conf/'
+    # save config
+    with open(conf_path+user_id+'.json', 'w') as f:
+        json.dump(config, f)
+
+
+async def call_show_prompt(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    # read prompt from user config
+    config = read_config(user_id)
+    content = 'Stop words:'+str(config['stop_words'])+'\n'+config['prompt']
+    return web.Response(text=content, content_type="text/html")
+
+
+async def call_reset_prompt(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    # read default prompt
+    config = load_default_config(user_id)
+    save_config(config, user_id)    
+    return web.Response(text='Prompt reset successfull', content_type="text/html")
+
+
+async def call_set_prompt(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    # read prompt from user config
+    config = read_config(user_id)
+    # set new prompt
+    config['prompt'] = data['prompt']
+    save_config(config, user_id)    
+    return web.Response(text='Prompt set successfull', content_type="text/html")
+
+
+async def call_set_stop_words(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    # read prompt from user config
+    config = read_config(user_id)
+    # set new stop_words
+    config['stop_words'] = data['stop_words']
+    save_config(config, user_id)
+    return web.Response(text='Stop words set successfull', content_type="text/html")
+
+
+
+async def call_voice(request):
+    # get user_id and voice file from post request
+    reader = await request.multipart()
+    
+    # read user_id
+    field = await reader.next()        
+    user_id = await field.read()
+    # convert bytearray to text
+    user_id = user_id.decode('utf-8')
+
+    # Read accepted users list from text file
+    granted_users = []
+    with open('granted_users.txt', 'r') as f:
+        for line in f:
+            granted_users.append(line.strip())
+
+    # generate a random token for the filename
+    filename = str(uuid.uuid4())
+    # Check is user id in accepted users
+    if user_id in granted_users:
+        
+        # read voice file
+        field = await reader.next()        
         voice = await field.read()
         # save voice file
         with open(filename+'.ogg', 'wb') as new_file:
-                new_file.write(voice)
+            new_file.write(voice)
+            
         # convert to wav
         os.system('ffmpeg -i '+filename+'.ogg -ac 1 -ar 16000 '+filename+'.wav -y')
         # remove ogg file
         os.remove(filename+'.ogg')
         # transcribe and receive response
         user_text = await stt(os.environ.get('STT_SERVER', ''), filename+'.wav')
-        #user_text = asyncio.run(stt(os.environ.get('STT_SERVER', ''), filename+'.wav'))
-        # user_text = stt(os.environ.get('STT_SERVER', ''), filename+'.wav')
-        
-        #content = filename+'.wav'
-        return web.Response(text=user_text, content_type="text/html")
+
+        config = read_config(user_id)
+
+        # openai conversation
+        # init
+        stop_words = config['stop_words']        
+        prompt = config['prompt']        
+        #prompt_len = len(prompt.split('\n'))
+        prompt += '\n'+stop_words[0]+' ' + user_text + '\n'+stop_words[1]+' '
+        bot_text = text_davinci(str(prompt), stop_words)['choices'][0]['text']
+        prompt += bot_text.replace('\n', '')
+
+        # update prompt in user config
+        config['prompt'] = prompt
+        save_config(config, user_id)
+
+        # remove wav file
+        os.remove(filename+'.wav')
+    else:
+        bot_text = 'You are not allowed to use this service, sorry'
+
+    # synthesis text to speech
+    tts(bot_text, filename)
+
+    # read audio file
+    with open(filename+'.wav', 'rb') as f:
+        content = f.read()
+    # remove wav file
+    os.remove(filename+'.wav')
+    # append content and bot_text to response
+    return web.Response(body=content, content_type="audio/wav")
 
 
-#def main():
-app = web.Application(client_max_size=1024**3)
-app.router.add_route('GET', '/test', call_test)
-app.router.add_route('POST', '/voice', call_voice)
-web.run_app(app, port=os.environ.get('PORT', ''))
+def main():
+    app = web.Application(client_max_size=1024**3)
+    app.router.add_route('GET', '/test', call_test)
+    app.router.add_route('POST', '/voice', call_voice)
+    app.router.add_route('POST', '/show_prompt', call_show_prompt)
+    app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
+    app.router.add_route('POST', '/set_prompt', call_set_prompt)
+    app.router.add_route('POST', '/set_stop_words', call_set_stop_words)
+    web.run_app(app, port=os.environ.get('PORT', ''))
 
-#if __name__ == "__main__":
-#        main()
+
+if __name__ == "__main__":
+    main()

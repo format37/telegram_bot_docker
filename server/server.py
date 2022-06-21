@@ -6,6 +6,7 @@ from urllib import request
 import requests
 from aiohttp import web
 import telebot
+import json
 
 WEBHOOK_HOST = os.environ.get('WEBHOOK_HOST', '')
 WEBHOOK_PORT = os.environ.get('WEBHOOK_PORT', '')  # 443, 80, 88 or 8443 (port need to be 'open')
@@ -69,24 +70,72 @@ def echo_message(message):
 langteabot	= default_bot_init('LANGTEABOT_TOKEN')
 bots.append(langteabot)
 
-@langteabot.message_handler(func=lambda message: True, content_types=['text'])
+"""@langteabot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/test'
     content = requests.get(url)
     langteabot.reply_to(message, content.text)
+"""
+#@langteabot.message_handler(func=lambda message: True, content_types=['text'])
+@langteabot.message_handler(commands=['show_prompt'])
+def echo_message(message):
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_prompt'
+    data = {"user_id": message.from_user.id}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)    
+    langteabot.reply_to(message, content.text)
+
+@langteabot.message_handler(commands=['reset_prompt'])
+def echo_message(message):
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/reset_prompt'
+    data = {"user_id": message.from_user.id}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)    
+    langteabot.reply_to(message, content.text)
+
+@langteabot.message_handler(commands=['set_prompt'])
+def echo_message(message):
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_prompt'
+    data = {
+        "user_id": message.from_user.id,
+        "prompt": message.text[len('/set_prompt '):]
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)    
+    langteabot.reply_to(message, content.text)
+
+@langteabot.message_handler(commands=['set_stop_words'])
+def echo_message(message):
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_stop_words'
+    data = {
+        "user_id": message.from_user.id,
+        "stop_words": message.text[len('/set_stop_words '):]
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)    
+    langteabot.reply_to(message, content.text)
+
 
 # receive audio from telegram
 @langteabot.message_handler(func=lambda message: True, content_types=['voice'])
 def echo_voice(message):
+    
     file_info = langteabot.get_file(message.voice.file_id)
     downloaded_file = langteabot.download_file(file_info.file_path)    
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/voice'
     # send voice as bytes via post
-    r = requests.post(url, files={'voice': downloaded_file})
+    #r = requests.post(url, files={'voice': downloaded_file})
+    # send user_id + voice as bytes, via post
+    r = requests.post(url, files={
+        'user_id': message.from_user.id, 
+        'voice': downloaded_file
+        })
 
-    # files = {'voice': open(message.voice.file_path, 'rb')}
-    # requests.post(url, files=files)
-    langteabot.reply_to(message, r.text)
+    # response returned as
+    # web.FileResponse(filename+'.wav')
+    #return as audio message
+    langteabot.send_voice(message.chat.id, r.content)
+    #langteabot.reply_to(message, 'test')
 
 
 def main():

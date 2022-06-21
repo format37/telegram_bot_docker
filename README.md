@@ -1,5 +1,5 @@
 # Telegram bots python docker server
-The server, for a list of telegram bots, with aiohttp and webhooks
+Docker server, for a list of telegram bots, with aiohttp and webhooks
 #### installation
 * git clone
 * cd

@@ -27,9 +27,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     build: langteabot
-    ports:
-      - 4200:4200
+    network_mode: "host"
     environment:
       - TZ=Europe/Moscow
       - PORT=4200
       - STT_SERVER=ws://192.168.1.11:2700
+      - TTS_SERVER=http://192.168.1.11:10005
+      - OPENAI_API_KEY=api_key_of_openai
