@@ -1,10 +1,7 @@
 version: '3.8'
 services:
 
-  server:
-    deploy:
-      mode: replicated
-      replicas: 1    
+  server: 
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -12,25 +9,24 @@ services:
     network_mode: "host"
     environment:
       - TZ=Europe/Moscow
-      - WEBHOOK_HOST=yourhost.name
+      - WEBHOOK_HOST=j1f.ru
       - WEBHOOK_PORT=443
       - DOCKER_PORT=8443
-      - F37T1BOT_TOKEN=token_of_bot_a
-      - LANGTEABOT_TOKEN=token_of_bot_b
+      - F37T1BOT_TOKEN=
+      - LANGTEABOT_TOKEN=
       - LANGTEABOT_PORT=4200
 
   langteabot:
-    deploy:
-      mode: replicated
-      replicas: 1
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+      - ./langteabot/user_conf:/server/user_conf
+      - ./langteabot/logs:/server/logs
     build: langteabot
     network_mode: "host"
     environment:
       - TZ=Europe/Moscow
       - PORT=4200
-      - STT_SERVER=ws://192.168.1.11:2700
-      - TTS_SERVER=http://192.168.1.11:10005
-      - OPENAI_API_KEY=api_key_of_openai
+      - STT_SERVER=ws://localhost:2700
+      - TTS_SERVER=http://localhost:10005
+      - OPENAI_API_KEY=
