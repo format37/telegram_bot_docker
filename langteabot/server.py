@@ -7,6 +7,7 @@ import websockets
 import json
 import openai
 import requests
+from datetime import datetime as dt
 
 
 def accept_feature_extractor(phrases, accept):
@@ -14,16 +15,8 @@ def accept_feature_extractor(phrases, accept):
         accept_text = str(accept['text'])
         conf_score = []
         for result_rec in accept['result']:
-            """print(
-                '#',
-                result_rec['conf'],
-                result_rec['start'],
-                result_rec['end'],
-                result_rec['word']
-                )"""
             conf_score.append(float(result_rec['conf']))
         conf_mid = str(sum(conf_score)/len(conf_score))
-        print('=== middle confidence:', conf_mid, '\n')
         phrases.append(accept_text)
 
 
@@ -96,8 +89,6 @@ def read_config(user_id):
     # if user.json conf not in user_conf folder, create it
     # default config file: config.json
     if not os.path.exists(conf_path+user_id+'.json'):
-        #with open(conf_path+'config.json', 'r') as f:
-        #    config = json.load(f)
         config = load_default_config(user_id)
     else:
         with open(conf_path+user_id+'.json', 'r') as f:
@@ -190,14 +181,18 @@ async def call_voice(request):
         # remove ogg file
         os.remove(filename+'.ogg')
         # transcribe and receive response
-        user_text = await stt(os.environ.get('STT_SERVER', ''), filename+'.wav')
+        user_text = await stt(os.environ.get('STT_SERVER', ''), filename+'.wav')        
 
         config = read_config(user_id)
+
+        # safe
+        if len(config['prompt']) > 1500:
+            config = load_default_config(user_id)
 
         # openai conversation
         # init
         stop_words = config['stop_words']        
-        prompt = config['prompt']        
+        prompt = config['prompt']    
         #prompt_len = len(prompt.split('\n'))
         prompt += '\n'+stop_words[0]+' ' + user_text + '\n'+stop_words[1]+' '
         bot_text = text_davinci(str(prompt), stop_words)['choices'][0]['text']
@@ -206,6 +201,11 @@ async def call_voice(request):
         # update prompt in user config
         config['prompt'] = prompt
         save_config(config, user_id)
+
+        # append datetime and prompt to logs/prompt_[iser_id].csv
+        # splitter is ;
+        with open('logs/prompt_'+user_id+'.csv', 'a') as f:
+            f.write(str(dt.now())+';'+prompt+'\n')
 
         # remove wav file
         os.remove(filename+'.wav')
