@@ -59,7 +59,7 @@ def tts(tts_text, filename):
 
 
 def text_davinci(prompt, stop_words):
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+    openai.api_key = os.getenv("PHRASE_SEED")
     return json.loads(str(openai.Completion.create(
       engine="text-davinci-002",
       prompt=prompt,
