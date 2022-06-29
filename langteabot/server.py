@@ -72,11 +72,6 @@ def text_davinci(prompt, stop_words):
     )))
 
 
-async def call_test(request):
-        content = "get ok"
-        return web.Response(text=content, content_type="text/html")
-
-
 def load_default_config(user_id):
     conf_path = 'user_conf/'
     with open(conf_path+'config.json', 'r') as f:
@@ -225,8 +220,7 @@ async def call_voice(request):
 
 
 def main():
-    app = web.Application(client_max_size=1024**3)
-    app.router.add_route('GET', '/test', call_test)
+    app = web.Application(client_max_size=1024**3)    
     app.router.add_route('POST', '/voice', call_voice)
     app.router.add_route('POST', '/show_prompt', call_show_prompt)
     app.router.add_route('POST', '/reset_prompt', call_reset_prompt)

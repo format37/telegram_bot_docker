@@ -23,6 +23,11 @@ WEBHOOK_SSL_PRIV = 'webhook_pkey.pem'
 # with the same value in you put in WEBHOOK_HOST
 
 
+async def call_test(request):
+        content = "get ok"
+        return web.Response(text=content, content_type="text/html")
+
+
 def default_bot_init(bot_token_env):
         API_TOKEN = os.environ.get(bot_token_env, '')
         bot = telebot.TeleBot(API_TOKEN)
@@ -142,7 +147,7 @@ def main():
 
     app = web.Application()
     app.router.add_post('/{token}/', handle)
-
+    app.router.add_route('GET', '/test', call_test)
     # Build ssl context
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
     context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
