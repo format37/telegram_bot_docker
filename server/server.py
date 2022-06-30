@@ -74,7 +74,7 @@ def send_user(message):
     url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
     data = {
         "message": message.text,
-        "inline": False
+        "inline": 0
         }
     request_str = json.dumps(data)
     answer = json.loads(requests.post(url, json=request_str).text)
@@ -88,7 +88,7 @@ def query_text(inline_query):
         url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
         data = {
             "message": inline_query.query,
-            "inline": True
+            "inline": 1
             }
         request_str = json.dumps(data)
         answer = requests.post(url, json=request_str)
