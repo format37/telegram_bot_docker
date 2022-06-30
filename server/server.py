@@ -72,11 +72,42 @@ bots.append(calcubot)
 @calcubot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
     url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
-    data = {"message": message.text}
+    data = {
+        "message": message.text,
+        "inline": False
+        }
     request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    calcubot.reply_to(message, content.text)
+    answer = requests.post(url, json=request_str)
+    calcubot.reply_to(message, answer.text)
 
+@calcubot.inline_handler(func=lambda chosen_inline_result: True)
+def query_text(inline_query):
+    message_text_prepared = inline_query.query.strip()
+    if message_text_prepared!='':
+        #answer	= calcubot_eval(CALCUBOT_SCRIPT_PATH,True,inline_query.query,god_mode,CALCUBOT_WORDS)
+        url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
+        data = {
+            "message": inline_query.query,
+            "inline": True
+            }
+        request_str = json.dumps(data)
+        answer = requests.post(url, json=request_str)
+        calcubot.answer_inline_query(
+            inline_query.id, 
+            answer, 
+            cache_time=0, 
+            is_personal=True
+            ) # updated
+    else:
+        answer	= ['Empty expression..']
+        responce = [
+            telebot.types.InlineQueryResultArticle(
+                'result', 
+                answer[0], 
+                telebot.types.InputTextMessageContent( answer[0] )
+                )
+            ] 
+        calcubot.answer_inline_query(inline_query.id, responce)
 # === calcubot --
 
 

@@ -15,6 +15,7 @@ def secure_eval(expression):
 async def call_message(request):
     data = json.loads(await request.json())
     expression = data['message']
+    inline = data['inline']
     res = str(secure_eval(expression))
     return web.Response(text=res)
 
