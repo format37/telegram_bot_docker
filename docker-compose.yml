@@ -39,7 +39,10 @@ services:
     build: calcubot
     #network_mode: "host"
     networks:
-      - no-internet
+      front:
+        driver: bridge
+        driver_opts:
+          com.docker.network.bridge.enable_ip_masquerade: 'false'
     ports:
       - "4201:4201"
     environment:
