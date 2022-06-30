@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import ssl
 import os
-from urllib import request
+# from urllib import request
 import requests
 from aiohttp import web
 import telebot
@@ -63,15 +63,24 @@ async def handle(request):
 
 bots	= []
 
-# f37bot
-f37bot	= default_bot_init('F37T1BOT_TOKEN')
-bots.append(f37bot)
+# === calcubot ++
 
-@f37bot.message_handler(func=lambda message: True, content_types=['text'])
+calcubot	= default_bot_init('CALCUBOT_TOKEN')
+bots.append(calcubot)
+
+@calcubot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    f37bot.reply_to(message, message.text)
+    url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
+    data = {"message": message.text}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    calcubot.reply_to(message, content.text)
 
-# langteabot
+# === calcubot --
+
+
+# === langteabot ++
+
 langteabot	= default_bot_init('LANGTEABOT_TOKEN')
 bots.append(langteabot)
 
@@ -142,6 +151,7 @@ def echo_voice(message):
     langteabot.send_voice(message.chat.id, r.content)
     #langteabot.reply_to(message, 'test')
 
+# === langteabot --
 
 def main():
 

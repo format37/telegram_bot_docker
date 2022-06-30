@@ -11,10 +11,11 @@ services:
       - TZ=Europe/Moscow
       - WEBHOOK_HOST=j1f.ru
       - WEBHOOK_PORT=443
-      - DOCKER_PORT=8443
-      - F37T1BOT_TOKEN=
+      - DOCKER_PORT=8443      
       - LANGTEABOT_TOKEN=
       - LANGTEABOT_PORT=4200
+      - CALCUBOT_TOKEN=
+      - CALCUBOT_PORT=4201
 
   langteabot:
     volumes:
