@@ -1,5 +1,5 @@
 import resource
-import sys
+from sys import argv
 from user_defined import *
 import pandas as pd
 import numpy as np
@@ -14,7 +14,7 @@ import math
 try:
 	res_limits = resource.getrusage(resource.RUSAGE_SELF)
 	resource.setrlimit(resource.RLIMIT_CPU, (2, 2))
-	request = sys.argv[1]
+	request = argv[1]
 	print( eval(request) )
 except Exception as e:
 	print(e)
