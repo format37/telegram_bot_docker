@@ -37,14 +37,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     build: calcubot
-    #network_mode: "host"
-    networks:
-      front:
-        driver: bridge
-        driver_opts:
-          com.docker.network.bridge.enable_ip_masquerade: 'false'
-    ports:
-      - "4201:4201"
+    network_mode: "host"
+    dns: 0.0.0.0
+    #ports:
+    #  - "4201:4201"
     environment:
       - TZ=Europe/Moscow
       - PORT=4201

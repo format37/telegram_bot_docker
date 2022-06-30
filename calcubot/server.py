@@ -1,12 +1,23 @@
 from aiohttp import web
 import json
 import os
+import subprocess
+
+
+def secure_eval(expression):
+    ExpressionOut = subprocess.Popen(
+    ['python3', 'calculate.py',expression],
+    stdout=subprocess.PIPE, 
+    stderr=subprocess.STDOUT)
+    stdout,stderr = ExpressionOut.communicate()
+    return( stdout.decode("utf-8").replace('\n','') )
 
 
 async def call_message(request):
     data = json.loads(await request.json())
-    message = data['message']+'W'
-    return web.Response(text=message)
+    expression = data['message']
+    res = str(secure_eval(expression))
+    return web.Response(text=res)
 
 
 def main():

@@ -2,7 +2,7 @@ FROM python:3.9.13-slim-buster
 WORKDIR /app
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt --no-cache-dir
-COPY test.sh /app
+COPY calculate.py /app
 COPY server.py /app
 # no permissions user
 RUN addgroup --gid 1001 --system app && \
