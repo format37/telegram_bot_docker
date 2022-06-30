@@ -77,14 +77,6 @@ def send_user(message):
     content = requests.post(url, json=request_str)
     calcubot.reply_to(message, content.text)
 
-"""@calcubot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
-    data = {"message": message.text}
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    calcubot.reply_to(message, content.text)"""
-
 # === calcubot --
 
 

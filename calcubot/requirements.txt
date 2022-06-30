@@ -1,2 +1,7 @@
 aiohttp
 websockets
+pandas
+numpy
+scipy
+#statistics
+#ast
