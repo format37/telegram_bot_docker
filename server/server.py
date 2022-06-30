@@ -68,7 +68,8 @@ bots	= []
 calcubot	= default_bot_init('CALCUBOT_TOKEN')
 bots.append(calcubot)
 
-@calcubot.message_handler(commands=['cl'])
+#@calcubot.message_handler(commands=['cl'])
+@calcubot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
     url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
     data = {"message": message.text}
