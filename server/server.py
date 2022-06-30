@@ -91,7 +91,32 @@ def query_text(inline_query):
             "inline": 1
             }
         request_str = json.dumps(data)
-        answer = requests.post(url, json=request_str)
+        #answer = json.loads(requests.post(url, json=request_str))
+        answer = ['a','b','c']
+
+        # answer 0        
+        r0 = telebot.types.InlineQueryResultArticle(
+            '0', 
+            answer[0], 
+            telebot.types.InputTextMessageContent( answer[0] ),
+            )
+
+        # answer 1        
+        r1 = telebot.types.InlineQueryResultArticle(
+            '1', 
+            answer[1], 
+            telebot.types.InputTextMessageContent( answer[1] ),
+            )
+
+        # answer 2
+        r2 = telebot.types.InlineQueryResultArticle(
+            '2', 
+            answer[2], 
+            telebot.types.InputTextMessageContent( answer[2] ), 
+            )
+
+        answer = [r0,r1,r2]
+
         calcubot.answer_inline_query(
             inline_query.id, 
             answer, 
