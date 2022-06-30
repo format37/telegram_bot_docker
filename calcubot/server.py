@@ -31,6 +31,7 @@ async def call_message(request):
                     expression + ' = ' + res,
                     res
                 ]
+        answer = ['b', 'c', 'd']
         response = json.dumps(answer)
         return web.Response(text=response, content_type='application/json')
 
