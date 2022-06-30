@@ -92,7 +92,7 @@ def query_text(inline_query):
             }
         request_str = json.dumps(data)
         answer = json.loads(requests.post(url, json=request_str).text)
-        print(answer)
+        # print(answer)
 
         # answer 0        
         r0 = telebot.types.InlineQueryResultArticle(

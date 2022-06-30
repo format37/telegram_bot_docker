@@ -23,7 +23,7 @@ async def call_message(request):
     res = str(secure_eval(expression))[:answer_max_lenght]
     # prepare response
     if inline == 0:
-        response = json.dumps(str(res) + ' = ' + expression)
+        response = json.dumps(res + ' = ' + expression)
         return web.Response(text=response, content_type='application/json')
     else:
         answer  = [
@@ -31,7 +31,7 @@ async def call_message(request):
                     expression + ' = ' + res,
                     res
                 ]
-        answer = ['b', 'c', 'd']
+        # answer = ['b', 'c', 'd']
         response = json.dumps(answer)
         return web.Response(text=response, content_type='application/json')
 
