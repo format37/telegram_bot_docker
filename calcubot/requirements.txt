@@ -3,5 +3,6 @@ websockets
 pandas
 numpy
 scipy
+pyTelegramBotAPI
 #statistics
 #ast
