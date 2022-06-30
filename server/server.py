@@ -77,8 +77,8 @@ def send_user(message):
         "inline": False
         }
     request_str = json.dumps(data)
-    answer = requests.post(url, json=request_str)
-    calcubot.reply_to(message, answer.text)
+    answer = json.loads(requests.post(url, json=request_str).text)
+    calcubot.reply_to(message, answer)
 
 @calcubot.inline_handler(func=lambda chosen_inline_result: True)
 def query_text(inline_query):
