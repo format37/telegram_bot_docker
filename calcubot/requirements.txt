@@ -1,4 +1,4 @@
 aiohttp
 websockets
-requests
-openai
+#requests
+#openai
