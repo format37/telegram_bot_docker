@@ -38,6 +38,8 @@ services:
       - /etc/timezone:/etc/timezone:ro
     build: calcubot
     #network_mode: "host"
+    networks:
+      - no-internet
     ports:
       - "4201:4201"
     environment:
