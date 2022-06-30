@@ -1,9 +1,10 @@
 from aiohttp import web
+import json
 import os
 
 
 async def call_message(request):
-    data = await request.json()
+    data = json.loads(await request.json())
     message = data['message']+'W'
     return web.Response(text=message)
 
