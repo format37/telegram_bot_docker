@@ -37,7 +37,9 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     build: calcubot
-    network_mode: "host"
+    #network_mode: "host"
+    ports:
+      - "4201:4201"
     environment:
       - TZ=Europe/Moscow
       - PORT=4201
