@@ -50,6 +50,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+      - ./home_cleaners_watcher_bot/data:/app/data
     build: home_cleaners_watcher_bot
     dns: 0.0.0.0
     ports:

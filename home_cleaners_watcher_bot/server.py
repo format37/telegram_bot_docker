@@ -2,32 +2,43 @@ from urllib import response
 from aiohttp import web
 import json
 import os
+import pandas as pd
+
+
+def cleaner_bot_counter_plus(account_id,task):
+	df_full = pd.read_csv('data/data.csv')
+	current_value = int(df_full[df_full.account_id==account_id][task])
+	df_task = df_full[['account_id', task]]
+
+	# Economics ++
+	account_value = float(df_task[df_task.account_id==account_id][task])
+	appendix = 1
+	if len(df_task)>1 and account_value>df_task[task].min():
+		for idx,row in df_task.iterrows():
+			if account_value>row[task]:
+				appendix += (account_value-row[task])/10
+	# Economics --
+
+	df_full.loc[(df_full.account_id==account_id),task]=current_value+round(appendix,1)
+	df_full.to_csv('data/data.csv',index = None)
+	return task+' +'+str(round(appendix,1))
 
 
 async def call_message(request):
-    """# load data
+    cleaning_group_id = '-37549110'
+    # load data
     data = json.loads(await request.json())
-    expression = data['message']
-    # if expression contains '/cl ', remove it
-    if expression.startswith('/cl '):
-        expression = expression[4:]
-    inline = int(data['inline'])
-    answer_max_lenght = 4095
-    # prepare response
-    if inline == 0:
-        res = str(secure_eval(expression, 'native'))[:answer_max_lenght]
-        response = json.dumps(res + ' = ' + expression)
-        return web.Response(text=response, content_type='application/json')
+    message = data['message']
+    group = data['group']
+    user = data['user']
+    task = message[1:]
+    if task in ['dish', 'garbage', 'toilet', 'dry'] \
+        and group == cleaning_group_id:
+        answer = cleaner_bot_counter_plus(user, task)
     else:
-        res = str(secure_eval(expression, 'inline'))[:answer_max_lenght]
-        answer  = [
-                    res + ' = ' + expression,
-                    expression + ' = ' + res,
-                    res
-                ]
-        response = json.dumps(answer)
-        return web.Response(text=response, content_type='application/json')"""
-    return web.Response(text='ok', content_type='application/json')
+        answer = 'Command not supported: ' + message
+    
+    return web.Response(text=answer, content_type='application/json')
 
 
 def main():

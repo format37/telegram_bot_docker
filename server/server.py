@@ -76,21 +76,15 @@ def send_help(message):
 
 @hcwbot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
-    """url = 'http://localhost:'+os.environ.get('HCWBOT_PORT')+'/message'
-    reaction = True
-    # check is it group ?
-    if message.chat.type == 'group' or message.chat.type == 'supergroup':
-        # check, does message contains '/cl ' ?
-        if not message.text.startswith('/cl '):
-            reaction = False
-    if reaction:
-        data = {
+    url = 'http://localhost:'+os.environ.get('HCWBOT_PORT')+'/message'
+    data = {
             "message": message.text,
-            "inline": 0
+            "group": message.chat.id,
+            "user": message.from_user.id
             }
-        request_str = json.dumps(data)
-        answer = json.loads(requests.post(url, json=request_str).text)"""
-    hcwbot.reply_to(message, message.text)
+    request_str = json.dumps(data)
+    answer = requests.post(url, json=request_str).text
+    hcwbot.reply_to(message, answer)
 
 # === home_cleaners_watcher_bot --
 
