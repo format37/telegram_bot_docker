@@ -72,13 +72,20 @@ bots.append(calcubot)
 @calcubot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
     url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
-    data = {
-        "message": message.text,
-        "inline": 0
-        }
-    request_str = json.dumps(data)
-    answer = json.loads(requests.post(url, json=request_str).text)
-    calcubot.reply_to(message, answer)
+    reaction = True
+    # check is it group ?
+    if message.chat.type == 'group' or message.chat.type == 'supergroup':
+        # check, does message contains '/cl ' ?
+        if message.text.startswith('/cl '):
+            reaction = False
+    if reaction:
+        data = {
+            "message": message.text,
+            "inline": 0
+            }
+        request_str = json.dumps(data)
+        answer = json.loads(requests.post(url, json=request_str).text)
+        calcubot.reply_to(message, answer)
 
 @calcubot.inline_handler(func=lambda chosen_inline_result: True)
 def query_text(inline_query):

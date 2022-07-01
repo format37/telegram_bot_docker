@@ -23,6 +23,9 @@ async def call_message(request):
     res = str(secure_eval(expression))[:answer_max_lenght]
     # prepare response
     if inline == 0:
+        # if res contains '/cl ', remove it
+        if res.startswith('/cl '):
+            res = res[4:]
         response = json.dumps(res + ' = ' + expression)
         return web.Response(text=response, content_type='application/json')
     else:
@@ -31,7 +34,6 @@ async def call_message(request):
                     expression + ' = ' + res,
                     res
                 ]
-        # answer = ['b', 'c', 'd']
         response = json.dumps(answer)
         return web.Response(text=response, content_type='application/json')
 
