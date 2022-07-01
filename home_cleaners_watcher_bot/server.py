@@ -24,6 +24,11 @@ def cleaner_bot_counter_plus(account_id,task):
 	return task+' +'+str(round(appendix,1))
 
 
+def cleaner_bot_user_authorized(account_id):
+	df_full = pd.read_csv('data/data.csv')
+	return str(account_id) in [str(i) for i in df_full.account_id.to_list()]
+
+
 async def call_message(request):
     cleaning_group_id = '-37549110'
     # load data
@@ -31,6 +36,10 @@ async def call_message(request):
     message = data['message']
     group = data['group']
     user = data['user']
+
+    if not cleaner_bot_user_authorized(user):
+        return web.Response(text='User not authorized')
+
     task = message[1:]
     if task in ['dish', 'garbage', 'toilet', 'dry'] \
         and group == cleaning_group_id:
