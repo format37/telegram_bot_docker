@@ -33,9 +33,9 @@ async def call_message(request):
     cleaning_group_id = '-37549110'
     # load data
     data = json.loads(await request.json())
-    message = data['message']
-    group = data['group']
-    user = data['user']
+    message = str(data['message'])
+    group = str(data['group'])
+    user = str(data['user'])
 
     if not cleaner_bot_user_authorized(user):
         return web.Response(text='User not authorized')
@@ -51,9 +51,9 @@ async def call_message(request):
         answer = cleaner_bot_counter_plus(user, task)
     else:
         answer = 'Command not supported '+message
-        answer += ' '+str(group)
-        #answer += '\n'+user
-        #answer += '\n'+task
+        answer += '\nGroup: '+group
+        answer += '\nUser: '+user
+        answer += '\nTask: '+task
     
     return web.Response(text=answer, content_type='application/json')
 
