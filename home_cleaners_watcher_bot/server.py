@@ -52,8 +52,8 @@ async def call_message(request):
     else:"""
     answer = 'Command not supported '+message
     answer += '\nGroup: '+group
-    #answer += '\nUser: '+user
-    #answer += '\nTask: '+task
+    answer += '\nUser: '+user
+    answer += '\nTask: '+task
     
     return web.Response(text=answer, content_type='application/json')
 
