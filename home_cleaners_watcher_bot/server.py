@@ -64,7 +64,13 @@ async def call_message(request):
         if task in ['dish', 'garbage', 'toilet', 'dry']:
             answer = cleaner_bot_counter_plus(int(user), task)
 
-        if task == 'cancel':
+        # extract command from message
+        # for example, message:
+        # /cancel dish
+        # command:
+        # cancel
+        command = message.split(' ')[0].split('/')[1]
+        if command == 'cancel':
             # extract thing to cancel from message
             # for example, message:
             # /cancel dish
