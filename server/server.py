@@ -70,8 +70,10 @@ bots.append(calcubot)
 
 @calcubot.message_handler(commands=['help', 'start'])
 def send_help(message):
-    help_video_path = 'gifs/help.mp4'
-    calcubot.send_video(message.chat.id, help_video_path, reply_to_message_id = str(message))
+    video_link = 'https://service.icecorp.ru/help.mp4'
+    video_caption = 'Example'
+    video_reply = telebot.types.Video(video_link, video_caption)
+    calcubot.send_video(message.chat.id, video_reply)
 
 
 @calcubot.message_handler(func=lambda message: True, content_types=['text'])
