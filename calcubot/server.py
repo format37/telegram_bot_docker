@@ -5,9 +5,9 @@ import os
 import subprocess
 from telebot import types
 
-def secure_eval(expression):
+def secure_eval(expression, mode):
     ExpressionOut = subprocess.Popen(
-    ['python3', 'calculate.py',expression],
+    ['python3', 'calculate_'+mode+'.py',expression],
     stdout=subprocess.PIPE, 
     stderr=subprocess.STDOUT)
     stdout,stderr = ExpressionOut.communicate()
@@ -22,13 +22,14 @@ async def call_message(request):
     if expression.startswith('/cl '):
         expression = expression[4:]
     inline = int(data['inline'])
-    answer_max_lenght       = 4095
-    res = str(secure_eval(expression))[:answer_max_lenght]
+    answer_max_lenght = 4095
     # prepare response
-    if inline == 0:        
+    if inline == 0:
+        res = str(secure_eval(expression, 'native'))[:answer_max_lenght]
         response = json.dumps(res + ' = ' + expression)
         return web.Response(text=response, content_type='application/json')
     else:
+        res = str(secure_eval(expression, 'inline'))[:answer_max_lenght]
         answer  = [
                     res + ' = ' + expression,
                     expression + ' = ' + res,

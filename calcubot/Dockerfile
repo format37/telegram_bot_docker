@@ -2,7 +2,8 @@ FROM python:3.9.13-slim-buster
 WORKDIR /app
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt --no-cache-dir
-COPY calculate.py /app
+COPY calculate_native.py /app
+COPY calculate_inline.py /app
 COPY user_defined.py /app
 COPY server.py /app
 # no permissions user
