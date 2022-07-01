@@ -63,6 +63,38 @@ async def handle(request):
 
 bots	= []
 
+# === home_cleaners_watcher_bot ++
+
+hcwbot	= default_bot_init('HCWBOT_TOKEN')
+bots.append(hcwbot)
+
+"""@hcwbot.message_handler(commands=['help', 'start'])
+def send_help(message):
+    link = 'https://service.icecorp.ru/help.mp4'
+    hcwbot.send_video(message.chat.id, link, reply_to_message_id = str(message))
+"""
+
+@hcwbot.message_handler(func=lambda message: True, content_types=['text'])
+def send_user(message):
+    """url = 'http://localhost:'+os.environ.get('HCWBOT_PORT')+'/message'
+    reaction = True
+    # check is it group ?
+    if message.chat.type == 'group' or message.chat.type == 'supergroup':
+        # check, does message contains '/cl ' ?
+        if not message.text.startswith('/cl '):
+            reaction = False
+    if reaction:
+        data = {
+            "message": message.text,
+            "inline": 0
+            }
+        request_str = json.dumps(data)
+        answer = json.loads(requests.post(url, json=request_str).text)"""
+    hcwbot.reply_to(message, message.text)
+
+# === home_cleaners_watcher_bot --
+
+
 # === calcubot ++
 
 calcubot	= default_bot_init('CALCUBOT_TOKEN')
@@ -143,6 +175,7 @@ def query_text(inline_query):
                 )
             ] 
         calcubot.answer_inline_query(inline_query.id, responce)
+
 # === calcubot --
 
 

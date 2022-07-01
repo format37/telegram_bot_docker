@@ -16,6 +16,8 @@ services:
       - LANGTEABOT_PORT=4200
       - CALCUBOT_TOKEN=
       - CALCUBOT_PORT=4201
+      - HCWBOT_TOKEN=
+      - HCWBOT_PORT=4202
 
   langteabot:
     volumes:
@@ -37,10 +39,21 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     build: calcubot
-    network_mode: "host"
     dns: 0.0.0.0
-    #ports:
-    #  - "4201:4201"
+    ports:
+      - 4201:4201
     environment:
       - TZ=Europe/Moscow
       - PORT=4201
+
+  home_cleaners_watcher_bot:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    build: home_cleaners_watcher_bot
+    dns: 0.0.0.0
+    ports:
+      - 4202:4202
+    environment:
+      - TZ=Europe/Moscow
+      - PORT=4202
