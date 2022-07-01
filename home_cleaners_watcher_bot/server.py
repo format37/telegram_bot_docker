@@ -40,7 +40,12 @@ async def call_message(request):
     if not cleaner_bot_user_authorized(user):
         return web.Response(text='User not authorized')
 
-    task = message[1:]
+    # extract command from message
+    # for example, message:
+    # /dish@home_cleaners_watcher_bot
+    # command:
+    # dish
+    task = message.split('@')[0].split('/')[1]    
     if task in ['dish', 'garbage', 'toilet', 'dry'] \
         and group == cleaning_group_id:
         answer = cleaner_bot_counter_plus(user, task)
