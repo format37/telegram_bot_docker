@@ -68,7 +68,12 @@ bots	= []
 calcubot	= default_bot_init('CALCUBOT_TOKEN')
 bots.append(calcubot)
 
-#@calcubot.message_handler(commands=['cl'])
+@calcubot.message_handler(commands=['help', 'start'])
+def send_help(message):
+    help_video_path = 'gifs/help.mp4'
+    calcubot.send_video(message.chat.id, help_video_path, reply_to_message_id = str(message))
+
+
 @calcubot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
     url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
@@ -91,7 +96,6 @@ def send_user(message):
 def query_text(inline_query):
     message_text_prepared = inline_query.query.strip()
     if message_text_prepared!='':
-        #answer	= calcubot_eval(CALCUBOT_SCRIPT_PATH,True,inline_query.query,god_mode,CALCUBOT_WORDS)
         url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
         data = {
             "message": inline_query.query,
@@ -99,7 +103,6 @@ def query_text(inline_query):
             }
         request_str = json.dumps(data)
         answer = json.loads(requests.post(url, json=request_str).text)
-        # print(answer)
 
         # answer 0        
         r0 = telebot.types.InlineQueryResultArticle(
