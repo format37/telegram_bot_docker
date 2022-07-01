@@ -76,7 +76,7 @@ def send_user(message):
     # check is it group ?
     if message.chat.type == 'group' or message.chat.type == 'supergroup':
         # check, does message contains '/cl ' ?
-        if message.text.startswith('/cl '):
+        if not message.text.startswith('/cl '):
             reaction = False
     if reaction:
         data = {
