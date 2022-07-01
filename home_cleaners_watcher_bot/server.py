@@ -51,7 +51,7 @@ async def call_message(request):
         answer = cleaner_bot_counter_plus(user, task)
     else:
         answer = 'Command not supported '+message
-        answer += '\nGroup: '+group
+        answer += '\nGroup: '+str(group)
         #answer += '\nUser: '+user
         #answer += '\nTask: '+task
     
