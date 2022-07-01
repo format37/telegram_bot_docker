@@ -7,6 +7,7 @@ import pandas as pd
 
 def cleaner_bot_counter_plus(account_id,task):
     try:
+        account_id = int(account_id)
         df_full = pd.read_csv('data/data.csv')
         current_value = int(df_full[df_full.account_id==account_id][task])
         df_task = df_full[['account_id', task]]
