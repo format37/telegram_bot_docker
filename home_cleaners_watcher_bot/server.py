@@ -45,7 +45,8 @@ async def call_message(request):
     # /dish@home_cleaners_watcher_bot
     # command:
     # dish
-    """task = message.split('@')[0].split('/')[1]    
+    task = message.split('@')[0].split('/')[1]    
+    """
     if task in ['dish', 'garbage', 'toilet', 'dry'] \
         and group == cleaning_group_id:
         answer = cleaner_bot_counter_plus(user, task)
