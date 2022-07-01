@@ -50,7 +50,9 @@ async def call_message(request):
         and group == cleaning_group_id:
         answer = cleaner_bot_counter_plus(user, task)
     else:
-        answer = 'Command not supported: ' + message
+        answer = 'Command not supported: ' + message + '\n' + \
+            'Task: ' + task + '\n' + \
+            'Group: ' + group
     
     return web.Response(text=answer, content_type='application/json')
 
