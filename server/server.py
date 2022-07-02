@@ -90,7 +90,7 @@ def send_user(message):
     # Check the content type
     if answer.headers['Content-Type'] == 'application/json':
         if message.chat.id == message.from_user.id:
-            cleaning_group_id = '-37549110'
+            cleaning_group_id = -37549110
             hcwbot.send_message(cleaning_group_id, answer.text)
         else:
             hcwbot.reply_to(message, answer.text)
