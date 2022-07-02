@@ -128,10 +128,10 @@ async def call_set_prompt(request):
     # read prompt from user config
     config = read_config(user_id)
     # set new prompt
-    config['prompt'] = data['prompt']
+    # config['prompt'] = data['prompt']
     config['last_cmd'] = 'set_prompt'
     save_config(config, user_id)    
-    return web.Response(text='Prompt set successfull', content_type="text/html")
+    return web.Response(text='Please, send a new prompt', content_type="text/html")
 
 
 async def call_set_stop_words(request):
@@ -153,9 +153,16 @@ async def call_regular_message(request):
     user_id = str(data['user_id'])
     # read prompt from user config
     config = read_config(user_id)
+
+    answer = 'Regular messsage received'
+
+    if config['last_cmd'] == 'set_prompt':
+        config['prompt'] = data['message']
+        answer = 'Prompt set successfull'
+
     config['last_cmd'] = 'regular_message'
     save_config(config, user_id)
-    return web.Response(text='Regular messsage received', content_type="text/html")
+    return web.Response(text=answer, content_type="text/html")
 
 
 async def call_voice(request):
