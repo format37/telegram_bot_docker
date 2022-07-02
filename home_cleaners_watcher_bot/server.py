@@ -120,9 +120,8 @@ async def call_message(request):
             with open(photo_path, 'rb') as f:
                 return web.Response(body=f.read(), content_type='image/png')
     
-    #elif group == user:
-    else:
-        answer = "alert "+str(user)+' '+str(group)+' '+str(task)
+    elif group == user:    
+        answer = cleaner_bot_alert(task)
     
     return web.Response(text=answer, content_type='application/json')
 
