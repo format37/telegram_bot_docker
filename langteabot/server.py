@@ -141,10 +141,10 @@ async def call_set_stop_words(request):
     # read prompt from user config
     config = read_config(user_id)
     # set new stop_words
-    config['stop_words'] = data['stop_words']
+    #config['stop_words'] = data['stop_words']
     config['last_cmd'] = 'set_stop_words'
     save_config(config, user_id)
-    return web.Response(text='Stop words set successfull', content_type="text/html")
+    return web.Response(text='Please, send the first Stop word', content_type="text/html")
 
 
 async def call_regular_message(request):
@@ -153,14 +153,25 @@ async def call_regular_message(request):
     user_id = str(data['user_id'])
     # read prompt from user config
     config = read_config(user_id)
-
+    
+    config['last_cmd'] = 'regular_message'
     answer = 'Regular messsage received'
 
     if config['last_cmd'] == 'set_prompt':
         config['prompt'] = data['message']
-        answer = 'Prompt set successfull'
+        config['last_cmd'] = 'regular_message'
+        answer = 'Prompt set successfull'        
 
-    config['last_cmd'] = 'regular_message'
+    if config['last_cmd'] == 'set_stop_words':
+        config['stop_words'][0] = data['message']
+        config['last_cmd'] = 'stop_word_0'
+        answer = 'Stop word [0] set successfull. Please, send the second Stop word'        
+
+    if config['last_cmd'] == 'stop_word_0':
+        config['stop_words'][1] = data['message']
+        config['last_cmd'] = 'stop_word_1'
+        answer = 'Stop word [1] set successfull.'        
+    
     save_config(config, user_id)
     return web.Response(text=answer, content_type="text/html")
 
