@@ -104,6 +104,8 @@ async def call_show_prompt(request):
     user_id = str(data['user_id'])
     # read prompt from user config
     config = read_config(user_id)
+    config['last_cmd'] = 'show_prompt'
+    save_config(config, user_id)
     content = 'Stop words:'+str(config['stop_words'])+'\n'+config['prompt']
     return web.Response(text=content, content_type="text/html")
 
@@ -114,6 +116,7 @@ async def call_reset_prompt(request):
     user_id = str(data['user_id'])
     # read default prompt
     config = load_default_config(user_id)
+    config['last_cmd'] = 'reset_prompt'
     save_config(config, user_id)    
     return web.Response(text='Prompt reset successfull', content_type="text/html")
 
@@ -126,6 +129,7 @@ async def call_set_prompt(request):
     config = read_config(user_id)
     # set new prompt
     config['prompt'] = data['prompt']
+    config['last_cmd'] = 'set_prompt'
     save_config(config, user_id)    
     return web.Response(text='Prompt set successfull', content_type="text/html")
 
@@ -138,6 +142,7 @@ async def call_set_stop_words(request):
     config = read_config(user_id)
     # set new stop_words
     config['stop_words'] = data['stop_words']
+    config['last_cmd'] = 'set_stop_words'
     save_config(config, user_id)
     return web.Response(text='Stop words set successfull', content_type="text/html")
 
