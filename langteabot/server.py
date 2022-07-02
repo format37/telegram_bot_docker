@@ -147,6 +147,16 @@ async def call_set_stop_words(request):
     return web.Response(text='Stop words set successfull', content_type="text/html")
 
 
+async def call_set_stop_words(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    # read prompt from user config
+    config = read_config(user_id)
+    config['last_cmd'] = 'regular_message'
+    save_config(config, user_id)
+    return web.Response(text='Regular messsage received', content_type="text/html")
+
 
 async def call_voice(request):
     # get user_id and voice file from post request
