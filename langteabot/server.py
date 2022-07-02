@@ -147,7 +147,7 @@ async def call_set_stop_words(request):
     return web.Response(text='Stop words set successfull', content_type="text/html")
 
 
-async def call_set_stop_words(request):
+async def call_regular_message(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
@@ -241,6 +241,7 @@ def main():
     app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
     app.router.add_route('POST', '/set_stop_words', call_set_stop_words)
+    app.router.add_route('POST', '/regular_message', call_regular_message)
     web.run_app(app, port=os.environ.get('PORT', ''))
 
 

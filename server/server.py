@@ -240,7 +240,7 @@ def echo_message(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/regular_message'
     data = {
         "user_id": message.from_user.id,
-        "stop_words": message.text
+        "message": message.text
         }
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)    
