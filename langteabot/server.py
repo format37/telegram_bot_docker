@@ -115,7 +115,11 @@ async def call_reset_prompt(request):
     data = json.loads(request_str)
     user_id = str(data['user_id'])
     # read default prompt
+    config = read_config(user_id)
+    init_prompt = config['init_prompt']
     config = load_default_config(user_id)
+    config['prompt'] = init_prompt
+    config['init_prompt'] = init_prompt
     config['last_cmd'] = 'reset_prompt'
     save_config(config, user_id)    
     return web.Response(text='Prompt reset successfull', content_type="text/html")
@@ -158,6 +162,7 @@ async def call_regular_message(request):
 
     if config['last_cmd'] == 'set_prompt':
         config['prompt'] = data['message']
+        config['init_prompt'] = data['message']
         config['last_cmd'] = 'regular_message'
         answer = 'Prompt set successfull'        
 
