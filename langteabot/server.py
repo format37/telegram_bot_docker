@@ -163,7 +163,8 @@ async def call_regular_message(request):
         answer = 'Prompt set successfull'        
 
     if config['last_cmd'] == 'set_stop_words':
-        config['stop_words'][0] = data['message']
+        # save a new stop word to 0th place of config['stop_words']
+        config['stop_words'].insert(0, data['message'])
         config['last_cmd'] = 'stop_word_0'
         answer = 'Stop word [0] set successfull. Please, send the second Stop word'        
 
