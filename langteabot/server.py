@@ -117,9 +117,11 @@ async def call_reset_prompt(request):
     # read default prompt
     config = read_config(user_id)
     init_prompt = config['init_prompt']
+    stop_words = config['stop_words']
     config = load_default_config(user_id)
     config['prompt'] = init_prompt
     config['init_prompt'] = init_prompt
+    config['stop_words'] = stop_words
     config['last_cmd'] = 'reset_prompt'
     save_config(config, user_id)    
     return web.Response(text='Prompt reset successfull', content_type="text/html")
