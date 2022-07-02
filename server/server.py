@@ -92,11 +92,11 @@ def send_user(message):
         hcwbot.send_photo(message.chat.id, answer.content, reply_to_message_id = str(message))
     else: 
         #  answer.headers['Content-Type'] == 'application/json':
-        #if message.chat.id == message.from_user.id:
-        #    cleaning_group_id = -37549110
-        #    hcwbot.send_message(cleaning_group_id, answer.text)
-        #else:
-        hcwbot.reply_to(message, answer.text)    
+        if message.chat.id == message.from_user.id:
+            cleaning_group_id = -37549110
+            hcwbot.send_message(cleaning_group_id, answer.text)
+        else:
+            hcwbot.reply_to(message, answer.text)    
 
 # === home_cleaners_watcher_bot --
 
