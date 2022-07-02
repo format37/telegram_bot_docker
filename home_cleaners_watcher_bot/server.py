@@ -3,6 +3,25 @@ from aiohttp import web
 import json
 import os
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+def cleaner_bot_stat():
+	df_full			= pd.read_csv('data/data.csv')
+	df				= pd.DataFrame()
+	df['user']		= df_full['user']
+	df['dish']		= df_full['dish']
+	df['garbage']	= df_full['garbage']
+	df['toilet']	= df_full['toilet']
+	df['dry']		= df_full['dry']
+	df 				= df.set_index('user')
+	fig 			= plt.figure() # clean
+	heat_map		= sns.heatmap(df, annot=True, cmap="pink", cbar = False, fmt=".1f")
+	fig 			= heat_map.get_figure()	
+	image_path = 'data/heat_map.png'
+	fig.savefig(image_path)
+	return image_path
 
 
 def cleaner_bot_counter_plus(account_id,task):
@@ -78,6 +97,12 @@ async def call_message(request):
             # dish
             thing = message.split(' ')[1]
             answer = cleaner_bot_counter_minus(int(user), thing)
+
+        if command == 'stat':
+            photo_path = cleaner_bot_stat()
+            # return photo file as bytes
+            with open(photo_path, 'rb') as f:
+                return web.Response(body=f.read(), content_type='image/png')
     
     return web.Response(text=answer, content_type='application/json')
 

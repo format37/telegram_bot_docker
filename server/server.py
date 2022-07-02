@@ -83,8 +83,15 @@ def send_user(message):
             "user": message.from_user.id
             }
     request_str = json.dumps(data)
-    answer = requests.post(url, json=request_str).text
-    hcwbot.reply_to(message, answer)
+    answer = requests.post(url, json=request_str)
+    # there are two types of content_type:
+    # application/json
+    # image/png
+    # Check the content type
+    if answer.headers['Content-Type'] == 'application/json':
+        hcwbot.reply_to(message, answer.text)
+    elif answer.headers['Content-Type'] == 'image/png':
+        hcwbot.send_photo(message.chat.id, answer.content, reply_to_message_id = str(message))
 
 # === home_cleaners_watcher_bot --
 
