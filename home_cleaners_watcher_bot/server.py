@@ -121,7 +121,7 @@ async def call_message(request):
                 return web.Response(body=f.read(), content_type='image/png')
     
     elif group == user:
-        answer = cleaner_bot_alert(task)
+        answer = "cleaner_bot_alert(task)"
     
     return web.Response(text=answer, content_type='application/json')
 
