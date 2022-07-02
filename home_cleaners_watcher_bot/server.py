@@ -7,6 +7,22 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
+def cleaner_bot_alert(task):	
+	df_full				= pd.read_csv('data/data.csv')
+	df					= pd.DataFrame()
+	df['user']			= df_full['user']
+	df['account_name']	= df_full['account_name']
+	df['account_id']	= df_full['account_id']
+	df[task]			= df_full[task]
+	min_count			= df[task].min()
+	actual_users		= df[df[task]==min_count]
+	message_string 		= ''
+	for a_name in actual_users.account_name:
+		message_string += a_name + ' '
+	message_string 		+= task
+	return message_string
+
+
 def cleaner_bot_stat():
 	df_full			= pd.read_csv('data/data.csv')
 	df				= pd.DataFrame()
@@ -103,6 +119,9 @@ async def call_message(request):
             # return photo file as bytes
             with open(photo_path, 'rb') as f:
                 return web.Response(body=f.read(), content_type='image/png')
+    
+    elif group == user:
+        answer = cleaner_bot_alert(task)
     
     return web.Response(text=answer, content_type='application/json')
 
