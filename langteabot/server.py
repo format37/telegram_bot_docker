@@ -107,7 +107,7 @@ async def call_show_prompt(request):
     config = read_config(user_id)
     config['last_cmd'] = 'show_prompt'
     save_config(config, user_id)
-    content = config['prompt']
+    content = str(config['prompt'])
     return web.Response(text=content, content_type="text/html")
 
 
@@ -119,7 +119,7 @@ async def call_show_stop_words(request):
     config = read_config(user_id)
     config['last_cmd'] = 'show_stop_words'
     save_config(config, user_id)
-    content = config['stop_words']
+    content = str(config['stop_words'])
     return web.Response(text=content, content_type="text/html")
 
 
