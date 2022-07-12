@@ -90,6 +90,7 @@ def read_config(user_id):
             config = json.load(f)
     return config
 
+
 def save_config(config, user_id):
     # user configuration
     conf_path = 'user_conf/'
@@ -106,14 +107,23 @@ async def call_show_prompt(request):
     config = read_config(user_id)
     config['last_cmd'] = 'show_prompt'
     save_config(config, user_id)
-    content = 'Stop words:'+str(config['stop_words'])+'\n'+config['prompt']
+    content = config['prompt']
     return web.Response(text=content, content_type="text/html")
 
 
-async def call_reset_prompt(request):
+async def call_show_stop_words(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
+    # read prompt from user config
+    config = read_config(user_id)
+    config['last_cmd'] = 'show_stop_words'
+    save_config(config, user_id)
+    content = config['stop_words']
+    return web.Response(text=content, content_type="text/html")
+
+
+def reset_prompt(user_id):
     # read default prompt
     config = read_config(user_id)
     init_prompt = config['init_prompt']
@@ -123,7 +133,14 @@ async def call_reset_prompt(request):
     config['init_prompt'] = init_prompt
     config['stop_words'] = stop_words
     config['last_cmd'] = 'reset_prompt'
-    save_config(config, user_id)    
+    save_config(config, user_id)
+
+
+async def call_reset_prompt(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    reset_prompt(user_id)
     return web.Response(text='Prompt reset successfull', content_type="text/html")
 
 
@@ -226,7 +243,8 @@ async def call_voice(request):
 
         # safe
         if len(config['prompt']) > 1500:
-            config = load_default_config(user_id)
+            #config = load_default_config(user_id)
+            reset_prompt(user_id)
 
         # openai conversation
         # init
@@ -267,6 +285,7 @@ def main():
     app = web.Application(client_max_size=1024**3)    
     app.router.add_route('POST', '/voice', call_voice)
     app.router.add_route('POST', '/show_prompt', call_show_prompt)
+    app.router.add_route('POST', '/show_stop_words', call_show_stop_words)
     app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
     app.router.add_route('POST', '/set_stop_words', call_set_stop_words)

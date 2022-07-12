@@ -190,16 +190,17 @@ def query_text(inline_query):
 langteabot	= default_bot_init('LANGTEABOT_TOKEN')
 bots.append(langteabot)
 
-"""@langteabot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/test'
-    content = requests.get(url)
-    langteabot.reply_to(message, content.text)
-"""
-#@langteabot.message_handler(func=lambda message: True, content_types=['text'])
 @langteabot.message_handler(commands=['show_prompt'])
 def echo_message(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_prompt'
+    data = {"user_id": message.from_user.id}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)    
+    langteabot.reply_to(message, content.text)
+
+@langteabot.message_handler(commands=['show_stop_words'])
+def echo_message(message):
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_stop_words'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)    
