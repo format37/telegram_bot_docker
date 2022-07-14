@@ -250,7 +250,7 @@ async def call_voice(request):
         stop_words = config['stop_words']        
         prompt = config['prompt']    
         #prompt_len = len(prompt.split('\n'))
-        prompt += '\n'+stop_words[0]+': ' + user_text + '\n'+stop_words[1]+' '
+        prompt += '\n'+stop_words[0]+': ' + user_text + '\n'+stop_words[1]+': '
         bot_text = text_davinci(str(prompt), stop_words)['choices'][0]['text']
         prompt += bot_text.replace('\n', '')
 
