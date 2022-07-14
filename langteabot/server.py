@@ -164,7 +164,6 @@ async def call_set_stop_words(request):
     # read prompt from user config
     config = read_config(user_id)
     # set new stop_words
-    #config['stop_words'] = data['stop_words']
     config['last_cmd'] = 'set_stop_words'
     save_config(config, user_id)
     return web.Response(text='Please, send the first Stop word', content_type="text/html")
@@ -251,7 +250,7 @@ async def call_voice(request):
         stop_words = config['stop_words']        
         prompt = config['prompt']    
         #prompt_len = len(prompt.split('\n'))
-        prompt += '\n'+stop_words[0]+' ' + user_text + '\n'+stop_words[1]+' '
+        prompt += '\n'+stop_words[0]+': ' + user_text + '\n'+stop_words[1]+' '
         bot_text = text_davinci(str(prompt), stop_words)['choices'][0]['text']
         prompt += bot_text.replace('\n', '')
 

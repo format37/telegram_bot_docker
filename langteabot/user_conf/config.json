@@ -1,6 +1,6 @@
 {
     "questions_count_limit": 0,
-    "stop_words": ["Candidate:", "Hr:"], 
+    "stop_words": ["Candidate", "Hr"], 
     "prompt": "Candidate name is Alex.\nDialogue starts from a quick small talk. Then candidate ask 3 behavioral questions. Subsequently, 4 technical questions. And finally, candidate asks Hr about job.\nBelow is a dialogue of Hr with Candidate for Machine learning engineer position.\n\nHr: Hello! My name is Jane. And you?",
     "init_prompt": "Candidate name is Alex.\nDialogue starts from a quick small talk. Then candidate ask 3 behavioral questions. Subsequently, 4 technical questions. And finally, candidate asks Hr about job.\nBelow is a dialogue of Hr with Candidate for Machine learning engineer position.\n\nHr: Hello! My name is Jane. And you?",
     "last_cmd": "start"
