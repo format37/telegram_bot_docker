@@ -63,6 +63,24 @@ async def handle(request):
 
 bots	= []
 
+# === @id37bot ++
+
+id37bot	= default_bot_init('ID37BOT_TOKEN')
+bots.append(id37bot)
+
+@id37bot.message_handler(commands=['user'])
+def send_help(message):
+    message.from_user.id
+    id37bot.reply_to(message, message.from_user.id)
+
+@id37bot.message_handler(commands=['group'])
+def send_help(message):
+    message.from_user.id
+    id37bot.reply_to(message, message.chat.id)
+
+# === @id37bot --
+
+
 # === home_cleaners_watcher_bot ++
 
 hcwbot	= default_bot_init('HCWBOT_TOKEN')

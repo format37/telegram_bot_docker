@@ -18,6 +18,7 @@ services:
       - CALCUBOT_PORT=4201
       - HCWBOT_TOKEN=
       - HCWBOT_PORT=4202
+      - ID37BOT_TOKEN=
 
   langteabot:
     volumes:
