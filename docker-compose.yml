@@ -10,7 +10,7 @@ services:
     environment:
       - TZ=Europe/Moscow
       - WEBHOOK_HOST=j1f.ru
-      - WEBHOOK_PORT=443
+      - WEBHOOK_PORT=8443
       - DOCKER_PORT=8443      
       - LANGTEABOT_TOKEN=
       - LANGTEABOT_PORT=4200
