@@ -18,8 +18,7 @@ def secure_eval(expression, mode):
 async def call_message(request):
     # load data
     data = json.loads(await request.json())
-    expression = data['message']
-    user_id = str(data['user_id'])
+    expression = data['message']    
     # if expression contains '/cl ', remove it
     if expression.startswith('/cl '):
         expression = expression[4:]
@@ -29,6 +28,7 @@ async def call_message(request):
     if inline == 0:
         res = str(secure_eval(expression, 'native'))[:answer_max_lenght]
         response = json.dumps(res + ' = ' + expression)
+        user_id = str(data['user_id'])
         # append datetime and response to logs/[iser_id].csv
         # splitter is ;
         with open('logs/'+user_id+'.csv', 'a') as f:

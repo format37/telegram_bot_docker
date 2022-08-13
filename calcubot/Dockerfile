@@ -11,13 +11,15 @@ RUN addgroup --gid 1001 --system app && \
     adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group app && \
     find /app -type d -exec chmod 755 {} \; && \
     find /app -type f -exec chmod 644 {} \;
-USER app:app
 # Given a volumes definition in a docker-compose
 # volumes:
 #      - /etc/localtime:/etc/localtime:ro
 #      - /etc/timezone:/etc/timezone:ro
 #      - ./calcubot/logs:/app/logs
 # Give a write permission for /app/logs/
-VOLUME /app/logs
+RUN mkdir -p /app/logs && \
+    chown 1001:1001 /app/logs && \
+    chmod 775 /app/logs
+USER app:app
 ENTRYPOINT ["python"]
 CMD ["server.py"]
