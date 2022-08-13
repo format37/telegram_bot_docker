@@ -17,6 +17,8 @@ def secure_eval(expression, mode):
 
 
 async def call_message(request):
+    # enable logging
+    logging.basicConfig(level=logging.INFO)
     # load data
     data = json.loads(await request.json())
     expression = data['message']    
@@ -35,7 +37,8 @@ async def call_message(request):
         # with open('logs/'+user_id+'.csv', 'a') as f:
         #    f.write(str(dt.now())+';'+response+'\n')
         # Logging info to docker logs: User and response
-        logging.info('User: '+user_id+' Response: '+response)        
+        # logging.info('User: '+user_id+' Response: '+response)
+        logging.info(str(dt.now())+' '+'User: '+user_id+' Response: '+response)        
         return web.Response(text=response, content_type='application/json')
     else:
         res = str(secure_eval(expression, 'inline'))[:answer_max_lenght]
