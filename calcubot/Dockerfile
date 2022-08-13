@@ -11,7 +11,10 @@ RUN addgroup --gid 1001 --system app && \
     adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group app && \
     find /app -type d -exec chmod 755 {} \; && \
     find /app -type f -exec chmod 644 {} \;
-RUN chown -R $USER /app/logs 777
+# write permission for path /app/logs/
+# RUN mkdir -p /app/logs && \
+RUN chown 1001:1001 /app/logs && \
+    chmod 775 /app/logs
 USER app:app
 ENTRYPOINT ["python"]
 CMD ["server.py"]
