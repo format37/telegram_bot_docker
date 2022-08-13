@@ -6,6 +6,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     build: server
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     network_mode: "host"
     environment:
       - TZ=Europe/Moscow
@@ -27,6 +31,10 @@ services:
       - ./langteabot/user_conf:/server/user_conf
       - ./langteabot/logs:/server/logs
     build: langteabot
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     network_mode: "host"
     environment:
       - TZ=Europe/Moscow
@@ -41,6 +49,10 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - ./calcubot/logs:/app/logs
     build: calcubot
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     dns: 0.0.0.0
     ports:
       - 4201:4201
@@ -54,6 +66,10 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - ./home_cleaners_watcher_bot/data:/app/data
     build: home_cleaners_watcher_bot
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     dns: 0.0.0.0
     ports:
       - 4202:4202

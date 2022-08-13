@@ -5,6 +5,7 @@ import os
 import subprocess
 from telebot import types
 from datetime import datetime as dt
+import logging
 
 def secure_eval(expression, mode):
     ExpressionOut = subprocess.Popen(
@@ -31,8 +32,10 @@ async def call_message(request):
         user_id = str(data['user_id'])
         # append datetime and response to logs/[iser_id].csv
         # splitter is ;
-        with open('logs/'+user_id+'.csv', 'a') as f:
-            f.write(str(dt.now())+';'+response+'\n')
+        # with open('logs/'+user_id+'.csv', 'a') as f:
+        #    f.write(str(dt.now())+';'+response+'\n')
+        # Logging info to docker logs: User and response
+        logging.info('User: '+user_id+' Response: '+response)        
         return web.Response(text=response, content_type='application/json')
     else:
         res = str(secure_eval(expression, 'inline'))[:answer_max_lenght]
