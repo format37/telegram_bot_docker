@@ -106,7 +106,7 @@ async def call_show_prompt(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_show_prompt')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_show_prompt')
     # read prompt from user config
     config = read_config(user_id)
     config['last_cmd'] = 'show_prompt'
@@ -119,7 +119,7 @@ async def call_show_stop_words(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_show_stop_words')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_show_stop_words')
     # read prompt from user config
     config = read_config(user_id)
     config['last_cmd'] = 'show_stop_words'
@@ -129,7 +129,7 @@ async def call_show_stop_words(request):
 
 
 def reset_prompt(user_id):
-    logging.info(str(dt.now())+' '+'User: '+user_id+' reset_prompt')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
     # read default prompt
     config = read_config(user_id)
     init_prompt = config['init_prompt']
@@ -154,7 +154,7 @@ async def call_set_prompt(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_set_prompt')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_prompt')
     # read prompt from user config
     config = read_config(user_id)
     # set new prompt
@@ -168,7 +168,7 @@ async def call_set_stop_words(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_set_stop_words')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_stop_words')
     # read prompt from user config
     config = read_config(user_id)
     # set new stop_words
@@ -181,7 +181,7 @@ async def call_regular_message(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_regular_message')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
     # read prompt from user config
     config = read_config(user_id)
         
@@ -219,7 +219,7 @@ async def call_voice(request):
     # read user_id
     field = await reader.next()        
     user_id = await field.read()
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_voice')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice')
     # convert bytearray to text
     user_id = user_id.decode('utf-8')
 
@@ -238,16 +238,16 @@ async def call_voice(request):
         field = await reader.next()        
         voice = await field.read()
         # save voice file
-        logging.info(str(dt.now())+' '+'User: '+user_id+' call_voice.save voice file')
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.save voice file')
         with open(filename+'.ogg', 'wb') as new_file:
             new_file.write(voice)
-        logging.info(str(dt.now())+' '+'User: '+user_id+' call_voice.convert to wav')
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.convert to wav')
         # convert to wav
         os.system('ffmpeg -i '+filename+'.ogg -ac 1 -ar 16000 '+filename+'.wav -y')
         # remove ogg file
         os.remove(filename+'.ogg')
         # transcribe and receive response
-        logging.info(str(dt.now())+' '+'User: '+user_id+' call_voice.transcribe and receive response')
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.transcribe and receive response')
         user_text = await stt(os.environ.get('STT_SERVER', ''), filename+'.wav')        
 
         config = read_config(user_id)
@@ -258,7 +258,7 @@ async def call_voice(request):
             reset_prompt(user_id)
 
         # openai conversation
-        logging.info(str(dt.now())+' '+'User: '+user_id+' call_voice.openai conversation')
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.openai conversation')
         # init
         stop_words = config['stop_words']        
         prompt = config['prompt']    
@@ -282,7 +282,7 @@ async def call_voice(request):
         bot_text = 'You are not allowed to use this service, sorry'
 
     # synthesis text to speech
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_voice.synthesis text to speech')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.synthesis text to speech')
     tts(bot_text, filename)
 
     # read audio file
@@ -291,7 +291,7 @@ async def call_voice(request):
     # remove wav file
     os.remove(filename+'.wav')
     # append content and bot_text to response
-    logging.info(str(dt.now())+' '+'User: '+user_id+' call_voice.response')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.response')
     return web.Response(body=content, content_type="audio/wav")
 
 
