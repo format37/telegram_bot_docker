@@ -13,8 +13,8 @@ RUN addgroup --gid 1001 --system app && \
     find /app -type f -exec chmod 644 {} \;
 # write permission for path /app/logs/
 # RUN mkdir -p /app/logs && \
-RUN chown 1001:1001 /app/logs && \
-    chmod 775 /app/logs
+# RUN chown 1001:1001 /app/logs && \
+#    chmod 775 /app/logs
 USER app:app
 ENTRYPOINT ["python"]
 CMD ["server.py"]
