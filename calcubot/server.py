@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 from telebot import types
+from datetime import datetime as dt
 
 def secure_eval(expression, mode):
     ExpressionOut = subprocess.Popen(
@@ -18,6 +19,7 @@ async def call_message(request):
     # load data
     data = json.loads(await request.json())
     expression = data['message']
+    user_id = str(data['user_id'])
     # if expression contains '/cl ', remove it
     if expression.startswith('/cl '):
         expression = expression[4:]
@@ -27,6 +29,10 @@ async def call_message(request):
     if inline == 0:
         res = str(secure_eval(expression, 'native'))[:answer_max_lenght]
         response = json.dumps(res + ' = ' + expression)
+        # append datetime and response to logs/[iser_id].csv
+        # splitter is ;
+        with open('logs/'+user_id+'.csv', 'a') as f:
+            f.write(str(dt.now())+';'+response+'\n')
         return web.Response(text=response, content_type='application/json')
     else:
         res = str(secure_eval(expression, 'inline'))[:answer_max_lenght]

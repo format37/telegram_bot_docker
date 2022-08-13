@@ -142,6 +142,7 @@ def send_user(message):
     if reaction:
         data = {
             "message": message.text,
+            "user_id": message.from_user.id,
             "inline": 0
             }
         request_str = json.dumps(data)
