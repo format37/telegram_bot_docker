@@ -209,6 +209,14 @@ def query_text(inline_query):
 langteabot	= default_bot_init('LANGTEABOT_TOKEN')
 bots.append(langteabot)
 
+@langteabot.message_handler(commands=['check_balance'])
+def echo_message(message):
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/check_balance'
+    data = {"user_id": message.from_user.id}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)    
+    langteabot.reply_to(message, content.text)
+
 @langteabot.message_handler(commands=['show_prompt'])
 def echo_message(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_prompt'

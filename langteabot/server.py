@@ -264,11 +264,18 @@ async def call_voice(request):
         prompt = config['prompt']    
         #prompt_len = len(prompt.split('\n'))
         prompt += '\n'+stop_words[0]+': ' + user_text + '\n'+stop_words[1]+': '
-        bot_text = text_davinci(str(prompt), stop_words)['choices'][0]['text']
+        davinchi_response = text_davinci(str(prompt), stop_words)
+        bot_text = davinchi_response['choices'][0]['text']
+        total_tokens = davinchi_response['usage']['total_tokens']
         prompt += bot_text.replace('\n', '')
+
+        # update total_tokens in user config
+        config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
 
         # update prompt in user config
         config['prompt'] = prompt
+
+        # save config
         save_config(config, user_id)
 
         # append datetime and prompt to logs/prompt_[iser_id].csv
@@ -295,6 +302,23 @@ async def call_voice(request):
     return web.Response(body=content, content_type="audio/wav")
 
 
+async def call_check_balance(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_check_balance')
+    # read prompt from user config
+    config = read_config(user_id)
+    total_tokens = int(config['total_tokens'])
+    # price = 0.06 base price
+    price = 0.1  # my price
+    balance = -total_tokens/1000*price
+    # round
+    balance = round(balance, 2)
+    content = '$'+str(balance)
+    return web.Response(text=content, content_type="text/html")
+
+
 def main():
     app = web.Application(client_max_size=1024**3)    
     app.router.add_route('POST', '/voice', call_voice)
@@ -304,6 +328,7 @@ def main():
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
     app.router.add_route('POST', '/set_stop_words', call_set_stop_words)
     app.router.add_route('POST', '/regular_message', call_regular_message)
+    app.router.add_route('POST', '/check_balance', call_check_balance)
     web.run_app(app, port=os.environ.get('PORT', ''))
 
 
