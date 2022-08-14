@@ -223,16 +223,23 @@ async def call_voice(request):
     # convert bytearray to text
     user_id = user_id.decode('utf-8')
 
-    # Read accepted users list from text file
-    granted_users = []
-    with open('granted_users.txt', 'r') as f:
-        for line in f:
-            granted_users.append(line.strip())
+    config = read_config(user_id)    
 
-    # generate a random token for the filename
-    filename = str(uuid.uuid4())
+    # Read accepted users list from text file
+    #granted_users = []
+    #with open('granted_users.txt', 'r') as f:
+    #    for line in f:
+    #        granted_users.append(line.strip())
+
+    
     # Check is user id in accepted users
-    if user_id in granted_users:
+    # if user_id in granted_users:
+
+    # check user balance
+    if config['total_tokens'] < 0:
+
+        # generate a random token for the filename
+        filename = str(uuid.uuid4())
         
         # read voice file
         field = await reader.next()        
@@ -250,12 +257,10 @@ async def call_voice(request):
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.transcribe and receive response')
         user_text = await stt(os.environ.get('STT_SERVER', ''), filename+'.wav')        
 
-        config = read_config(user_id)
-
         # safe
-        if len(config['prompt']) > 1500:
-            #config = load_default_config(user_id)
-            reset_prompt(user_id)
+        #if len(config['prompt']) > 1500:
+        #    #config = load_default_config(user_id)
+        #    reset_prompt(user_id)
 
         # openai conversation
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.openai conversation')
@@ -281,23 +286,23 @@ async def call_voice(request):
         # append datetime and prompt to logs/prompt_[iser_id].csv
         # splitter is ;
         with open('logs/prompt_'+user_id+'.csv', 'a') as f:
-            f.write(str(dt.now())+';'+prompt+'\n')
+            f.write(str(dt.now())+';'+prompt+';'+str(total_tokens)+'\n')
+
+        # remove wav file
+        # os.remove(filename+'.wav')
+
+        # synthesis text to speech
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.synthesis text to speech')
+        tts(bot_text, filename)
 
         # remove wav file
         os.remove(filename+'.wav')
     else:
-        bot_text = 'You are not allowed to use this service, sorry'
-
-    # synthesis text to speech
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.synthesis text to speech')
-    tts(bot_text, filename)
+        filename = 'add_funds.wav'
 
     # read audio file
     with open(filename+'.wav', 'rb') as f:
         content = f.read()
-    # remove wav file
-    os.remove(filename+'.wav')
-    # append content and bot_text to response
     logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.response')
     return web.Response(body=content, content_type="audio/wav")
 
