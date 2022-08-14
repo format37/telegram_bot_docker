@@ -323,7 +323,7 @@ async def call_check_balance(request):
     balance = -total_tokens/1000*price
     # round
     balance = round(balance, 2)
-    content = '$'+str(balance)
+    content = '$'+str(balance)+'\nTo top up your balance, just send a message to @format37'
     return web.Response(text=content, content_type="text/html")
 
 
