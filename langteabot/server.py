@@ -288,21 +288,24 @@ async def call_voice(request):
         with open('logs/prompt_'+user_id+'.csv', 'a') as f:
             f.write(str(dt.now())+';'+prompt+';'+str(total_tokens)+'\n')
 
-        # remove wav file
-        # os.remove(filename+'.wav')
+        # remove user's voice wav file
+        os.remove(filename+'.wav')
 
         # synthesis text to speech
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.synthesis text to speech')
         tts(bot_text, filename)
-
-        # remove wav file
-        os.remove(filename+'.wav')
+        file_should_be_removed = True
     else:
         filename = 'add_funds.wav'
+        file_should_be_removed = False
 
     # read audio file
     with open(filename+'.wav', 'rb') as f:
         content = f.read()
+
+    if file_should_be_removed:
+        # remove synthesis wav file
+        os.remove(filename+'.wav')
     logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.response')
     return web.Response(body=content, content_type="audio/wav")
 
