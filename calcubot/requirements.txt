@@ -6,3 +6,4 @@ scipy
 pyTelegramBotAPI
 #statistics
 #ast
+sympy

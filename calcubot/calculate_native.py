@@ -10,6 +10,7 @@ import datetime as dt
 import statistics
 import ast
 import math
+import sympy
 
 try:
 	res_limits = resource.getrusage(resource.RUSAGE_SELF)
