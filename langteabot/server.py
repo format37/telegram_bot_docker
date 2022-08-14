@@ -296,7 +296,7 @@ async def call_voice(request):
         tts(bot_text, filename)
         file_should_be_removed = True
     else:
-        filename = 'add_funds.wav'
+        filename = 'data/add_funds'
         file_should_be_removed = False
 
     # read audio file
