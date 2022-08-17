@@ -225,9 +225,9 @@ def echo_message(message):
     content = requests.post(url, json=request_str)    
     langteabot.reply_to(message, content.text)
 
-@langteabot.message_handler(commands=['show_stop_words'])
+@langteabot.message_handler(commands=['show_names'])
 def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_stop_words'
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_names'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)    
@@ -252,12 +252,12 @@ def echo_message(message):
     content = requests.post(url, json=request_str)    
     langteabot.reply_to(message, content.text)
 
-@langteabot.message_handler(commands=['set_stop_words'])
+@langteabot.message_handler(commands=['set_names'])
 def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_stop_words'
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_names'
     data = {
         "user_id": message.from_user.id,
-        "stop_words": message.text[len('/set_stop_words '):]
+        "names": message.text[len('/set_names '):]
         }
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)    

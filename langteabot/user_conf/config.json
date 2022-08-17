@@ -1,8 +1,8 @@
 {
     "questions_count_limit": 0,
-    "stop_words": ["User", "Bot"], 
+    "names": ["User", "Bot"], 
     "prompt": "Guess the film game.\nUser telling the episode description from some film.\nBot trying to guess the name of film.",
     "init_prompt": "Guess the film game.\nUser telling the episode description from some film.\nBot trying to guess the name of film.",
     "last_cmd": "start",
-    "total_tokens": -83334
+    "total_tokens": -50000
 }

@@ -115,16 +115,16 @@ async def call_show_prompt(request):
     return web.Response(text=content, content_type="text/html")
 
 
-async def call_show_stop_words(request):
+async def call_show_names(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_show_stop_words')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_show_names')
     # read prompt from user config
     config = read_config(user_id)
-    config['last_cmd'] = 'show_stop_words'
+    config['last_cmd'] = 'show_names'
     save_config(config, user_id)
-    content = str(config['stop_words'])
+    content = str(config['names'])
     return web.Response(text=content, content_type="text/html")
 
 
@@ -133,11 +133,11 @@ def reset_prompt(user_id):
     # read default prompt
     config = read_config(user_id)
     init_prompt = config['init_prompt']
-    stop_words = config['stop_words']
+    names = config['names']
     config = load_default_config(user_id)
     config['prompt'] = init_prompt
     config['init_prompt'] = init_prompt
-    config['stop_words'] = stop_words
+    config['names'] = names
     config['last_cmd'] = 'reset_prompt'
     save_config(config, user_id)
 
@@ -164,17 +164,17 @@ async def call_set_prompt(request):
     return web.Response(text='Please, send a new prompt', content_type="text/html")
 
 
-async def call_set_stop_words(request):
+async def call_set_names(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_stop_words')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_names')
     # read prompt from user config
     config = read_config(user_id)
-    # set new stop_words
-    config['last_cmd'] = 'set_stop_words'
+    # set new names
+    config['last_cmd'] = 'set_names'
     save_config(config, user_id)
-    return web.Response(text='Please, send the first Stop word', content_type="text/html")
+    return web.Response(text='Please, tell me Your name', content_type="text/html")
 
 
 async def call_regular_message(request):
@@ -193,17 +193,17 @@ async def call_regular_message(request):
         config['last_cmd'] = 'regular_message'
         answer = 'Prompt set successfull'        
 
-    elif config['last_cmd'] == 'set_stop_words':
-        # save a new stop word to 0th place of config['stop_words']
-        # config['stop_words'].insert(0, data['message'])
-        config['stop_words'][0] = data['message']
-        config['last_cmd'] = 'stop_word_0'
-        answer = 'Stop word [0] set successfull. Please, send the second Stop word'        
+    elif config['last_cmd'] == 'set_names':
+        # save a new stop word to 0th place of config['names']
+        # config['names'].insert(0, data['message'])
+        config['names'][0] = data['message']
+        config['last_cmd'] = 'names_0'
+        answer = 'Your name set successfull. Please, send the name of Bot'        
 
-    elif config['last_cmd'] == 'stop_word_0':
-        config['stop_words'][1] = data['message']
-        config['last_cmd'] = 'stop_word_1'
-        answer = 'Stop word [1] set successfull.'        
+    elif config['last_cmd'] == 'names_0':
+        config['names'][1] = data['message']
+        config['last_cmd'] = 'names_1'
+        answer = "Bot's name set successfull."
 
     else:
         config['last_cmd'] = 'regular_message'
@@ -265,11 +265,11 @@ async def call_voice(request):
         # openai conversation
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.openai conversation')
         # init
-        stop_words = config['stop_words']        
+        names = config['names']        
         prompt = config['prompt']    
         #prompt_len = len(prompt.split('\n'))
-        prompt += '\n'+stop_words[0]+': ' + user_text + '\n'+stop_words[1]+': '
-        davinchi_response = text_davinci(str(prompt), stop_words)
+        prompt += '\n'+names[0]+': ' + user_text + '\n'+names[1]+': '
+        davinchi_response = text_davinci(str(prompt), names)
         bot_text = davinchi_response['choices'][0]['text']
         total_tokens = davinchi_response['usage']['total_tokens']
         prompt += bot_text.replace('\n', '')
@@ -331,10 +331,10 @@ def main():
     app = web.Application(client_max_size=1024**3)    
     app.router.add_route('POST', '/voice', call_voice)
     app.router.add_route('POST', '/show_prompt', call_show_prompt)
-    app.router.add_route('POST', '/show_stop_words', call_show_stop_words)
+    app.router.add_route('POST', '/show_names', call_show_names)
     app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
-    app.router.add_route('POST', '/set_stop_words', call_set_stop_words)
+    app.router.add_route('POST', '/set_names', call_set_names)
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/check_balance', call_check_balance)
     web.run_app(app, port=os.environ.get('PORT', ''))
