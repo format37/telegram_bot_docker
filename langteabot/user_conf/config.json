@@ -4,5 +4,6 @@
     "prompt": "Guess the film game.\nUser telling the episode description from some film.\nBot trying to guess the name of film.",
     "init_prompt": "Guess the film game.\nUser telling the episode description from some film.\nBot trying to guess the name of film.",
     "last_cmd": "start",
-    "total_tokens": -71428
+    "total_tokens": -71428,
+    "price": 0.7
 }
