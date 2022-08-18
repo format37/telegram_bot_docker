@@ -79,6 +79,7 @@ def load_default_config(user_id):
     conf_path = 'user_conf/'
     with open(conf_path+'config.json', 'r') as f:
         config = json.load(f)
+    
     return config
 
 
@@ -133,8 +134,10 @@ def reset_prompt(user_id):
     # read default prompt
     config = read_config(user_id)
     init_prompt = config['init_prompt']
+    total_tokens = config['total_tokens']
     names = config['names']
     config = load_default_config(user_id)
+    config['total_tokens'] = total_tokens
     config['prompt'] = init_prompt
     config['init_prompt'] = init_prompt
     config['names'] = names
