@@ -7,6 +7,12 @@ import requests
 from aiohttp import web
 import telebot
 import json
+import logging
+
+# init logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 WEBHOOK_HOST = os.environ.get('WEBHOOK_HOST', '')
 WEBHOOK_PORT = os.environ.get('WEBHOOK_PORT', '')  # 443, 80, 88 or 8443 (port need to be 'open')
@@ -24,6 +30,7 @@ WEBHOOK_SSL_PRIV = 'webhook_pkey.pem'
 
 
 async def call_test(request):
+        logging.info('call_test')
         content = "get ok"
         return web.Response(text=content, content_type="text/html")
 
@@ -295,14 +302,14 @@ def echo_voice(message):
 # === langteabot --
 
 def main():
-
+    logging.info('Init')
     app = web.Application()
     app.router.add_post('/{token}/', handle)
     app.router.add_route('GET', '/test', call_test)
     # Build ssl context
-    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
-
+    logging.info('Starting')
     # Start aiohttp server
     web.run_app(
         app,
