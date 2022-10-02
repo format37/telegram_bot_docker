@@ -266,12 +266,18 @@ async def call_voice(request):
             new_file.write(voice)
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.convert to wav')
         # convert to wav
-        os.system('ffmpeg -i '+filename+'.ogg -ac 1 -ar 16000 '+filename+'.wav -y')
-        # remove ogg file
-        os.remove(filename+'.ogg')
+        # os.system('ffmpeg -i '+filename+'.ogg -ac 1 -ar 16000 '+filename+'.wav -y')
+        
         # transcribe and receive response
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.transcribe and receive response')
-        user_text = await stt(os.environ.get('STT_SERVER', ''), filename+'.wav')        
+        stt_url = os.environ.get('STT_SERVER', '')+'/inference'
+        # user_text = await stt(stt_uri+'/inference', filename+'.wav')
+        # with open(file_path, 'rb') as f:
+        #     r = requests.post(stt_url, files={'file': f})
+        user_text = requests.post(stt_url, files={'file': voice})
+
+        # remove ogg file
+        os.remove(filename+'.ogg')
 
         # safe
         #if len(config['prompt']) > 1500:
