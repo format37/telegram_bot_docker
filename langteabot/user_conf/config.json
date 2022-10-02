@@ -1,8 +1,8 @@
 {
     "questions_count_limit": 0,
     "names": ["User", "Bot"], 
-    "prompt": "Guess the film game.\nUser telling the episode description from some film.\nBot trying to guess the name of film.",
-    "init_prompt": "Guess the film game.\nUser telling the episode description from some film.\nBot trying to guess the name of film.",
+    "prompt": "Two friends have a conversation for a random topic. Jane interesting about details of Alex's news.",
+    "init_prompt": "Two friends have a conversation for a random topic. Jane interesting about details of Alex's news.",
     "last_cmd": "start",
     "total_tokens": -71428,
     "price": 0.7
