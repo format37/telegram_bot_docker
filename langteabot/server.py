@@ -1,3 +1,4 @@
+from asyncio.log import logger
 from aiohttp import web
 import os
 import uuid
@@ -24,8 +25,11 @@ def accept_feature_extractor(phrases, accept):
 
 
 async def stt(uri, file_name):
-    
-    async with websockets.connect(uri) as websocket:
+    with open(file_name, 'rb') as f:
+        r = requests.post(uri, files={'file': f})
+    logger.info('stt: '+r.text)
+    return r.text
+    """async with websockets.connect(uri) as websocket:
 
         phrases = []
 
@@ -48,14 +52,23 @@ async def stt(uri, file_name):
         accept = json.loads(await websocket.recv())
         accept_feature_extractor(phrases, accept)
 
-        return ' '.join(phrases)
+        return ' '.join(phrases)"""
 
 
 def tts(tts_text, filename):
     tts_server = os.environ.get('TTS_SERVER', '')
-    data={'text': tts_text}
-    request_str = json.dumps(data)
-    response = requests.post(tts_server+'/inference', json=request_str)
+    # data={'text': tts_text}
+    # request_str = json.dumps(data)
+    # https://cloud.google.com/text-to-speech/docs/voices
+    # https://cloud.google.com/text-to-speech
+    logger.info('tts: '+tts_text)
+    data = {
+        'text':tts_text,
+        'language':'en-US',
+        'model':'en-US-Neural2-F',
+        'speed':1
+    }
+    response = requests.post(tts_server+'/inference', json=data)
     # Save response as audio file
     with open(filename+".wav", "wb") as f:
         f.write(response.content)
