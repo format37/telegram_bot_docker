@@ -312,7 +312,7 @@ async def call_voice(request):
             f.write(str(dt.now())+';'+prompt+';'+str(total_tokens)+'\n')
 
         # remove user's voice wav file
-        os.remove(filename+'.wav')
+        # os.remove(filename+'.wav')
 
         # synthesis text to speech
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.synthesis text to speech')
