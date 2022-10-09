@@ -88,6 +88,40 @@ def send_help(message):
 # === @id37bot --
 
 
+# === @executebot ++
+
+executebot	= default_bot_init('EXECUTEBOT_TOKEN')
+bots.append(executebot)
+
+@executebot.message_handler(commands=['help', 'start'])
+def send_help(message):
+    # send message hello
+    executebot.reply_to(message, "Hello, I'm ExecuteBot")
+
+@executebot.message_handler(commands=['prompts'])
+def prompts_list(message):    
+    # Keyboard
+    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)    
+    keyboard.add(telebot.types.KeyboardButton(text="Friend"))
+    keyboard.add(telebot.types.KeyboardButton(text="Historian"))
+    keyboard.add(telebot.types.KeyboardButton(text="Physicist"))
+    keyboard.add(telebot.types.KeyboardButton(text="Psychologist"))
+    keyboard.add(telebot.types.KeyboardButton(text="Philosopher"))
+    keyboard.add(telebot.types.KeyboardButton(text="Emigrant"))
+    keyboard.add(telebot.types.KeyboardButton(text="HR"))
+    keyboard.add(telebot.types.KeyboardButton(text="Futurologist"))
+    keyboard.add(telebot.types.KeyboardButton(text="Guess the film"))
+    keyboard.add(telebot.types.KeyboardButton(text="Customizable"))
+    executebot.send_message(message.chat.id, "Choose your interlocutor:", reply_markup=keyboard)
+
+@executebot.message_handler(func=lambda message: True, content_types=['text'])
+def send_user(message):
+    # send message hello
+    executebot.reply_to(message, "lambda")
+
+# === @executebot --
+
+
 # === home_cleaners_watcher_bot ++
 
 hcwbot	= default_bot_init('HCWBOT_TOKEN')
