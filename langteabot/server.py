@@ -268,7 +268,7 @@ async def call_voice(request):
     # if user_id in granted_users:
 
     # check user balance
-    if float(config['total_tokens']) < 0:
+    if float(config['total_tokens']) <= 0:
 
         # generate a random token for the filename
         filename = str(uuid.uuid4())
