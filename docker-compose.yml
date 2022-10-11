@@ -14,7 +14,7 @@ services:
     network_mode: "host"
     environment:
       - TZ=Europe/Moscow
-      - WEBHOOK_HOST=j1f.ru
+      - WEBHOOK_HOST=www.j1f.ru
       - WEBHOOK_PORT=8443
       - DOCKER_PORT=8443      
       - LANGTEABOT_TOKEN=
@@ -24,6 +24,7 @@ services:
       - HCWBOT_TOKEN=
       - HCWBOT_PORT=4202
       - ID37BOT_TOKEN=
+      - EXECUTEBOT_TOKEN=
 
   langteabot:
     volumes:

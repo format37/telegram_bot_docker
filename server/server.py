@@ -102,37 +102,43 @@ def send_help(message):
 def prompts_list(message):    
     # Keyboard
     keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)    
-    data_path = 'data/'
-    with open(data_path+'prompts.json', 'r') as f:
-        prompts = json.load(f)
-    for prompt in prompts:
-        keyboard.add(telebot.types.KeyboardButton(prompt))
-    """keyboard.add(telebot.types.KeyboardButton(text="Friend"))
-    keyboard.add(telebot.types.KeyboardButton(text="Historian"))
-    keyboard.add(telebot.types.KeyboardButton(text="Physicist"))
-    keyboard.add(telebot.types.KeyboardButton(text="Psychologist"))
-    keyboard.add(telebot.types.KeyboardButton(text="Philosopher"))
-    keyboard.add(telebot.types.KeyboardButton(text="Emigrant"))
-    keyboard.add(telebot.types.KeyboardButton(text="HR"))
-    keyboard.add(telebot.types.KeyboardButton(text="Futurologist"))
-    keyboard.add(telebot.types.KeyboardButton(text="Guess the film"))
-    keyboard.add(telebot.types.KeyboardButton(text="Customizable"))"""
-    executebot.send_message(message.chat.id, "Choose your interlocutor:", reply_markup=keyboard)
+    try:
+        data_path = 'data/'
+        with open(data_path+'prompts.json', 'r') as f:
+            prompts = json.load(f)
+        for prompt in prompts:
+            keyboard.add(telebot.types.KeyboardButton(prompt))
+        """keyboard.add(telebot.types.KeyboardButton(text="Friend"))
+        keyboard.add(telebot.types.KeyboardButton(text="Historian"))
+        keyboard.add(telebot.types.KeyboardButton(text="Physicist"))
+        keyboard.add(telebot.types.KeyboardButton(text="Psychologist"))
+        keyboard.add(telebot.types.KeyboardButton(text="Philosopher"))
+        keyboard.add(telebot.types.KeyboardButton(text="Emigrant"))
+        keyboard.add(telebot.types.KeyboardButton(text="HR"))
+        keyboard.add(telebot.types.KeyboardButton(text="Futurologist"))
+        keyboard.add(telebot.types.KeyboardButton(text="Guess the film"))
+        keyboard.add(telebot.types.KeyboardButton(text="Customizable"))"""
+        executebot.send_message(message.chat.id, "Choose your interlocutor:", reply_markup=keyboard)
+    except Exception as e:
+        executebot.reply_to(message, e)
 
 @executebot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
-    data_path = 'data/'
-    with open(data_path+'prompts.json', 'r') as f:
-        prompts = json.load(f)
+    try:
+        data_path = 'data/'
+        with open(data_path+'prompts.json', 'r') as f:
+            prompts = json.load(f)
 
-    if message.text in prompts:
-        # send message hello
-        # executebot.reply_to(message, "Hello, I'm ExecuteBot")
-        executebot.send_message(message.chat.id, prompts[message.text])
-        # executebot.send_message(message.chat.id, "Enter your text:")
-        # executebot.register_next_step_handler(message, send_text)
-    else:
-        executebot.reply_to(message, "lambda")
+        if message.text in prompts:
+            # send message hello
+            # executebot.reply_to(message, "Hello, I'm ExecuteBot")
+            executebot.send_message(message.chat.id, prompts[message.text])
+            # executebot.send_message(message.chat.id, "Enter your text:")
+            # executebot.register_next_step_handler(message, send_text)
+        else:
+            executebot.reply_to(message, "lambda")
+    except Exception as e:
+        executebot.reply_to(message, e)
 
 # === @executebot --
 
