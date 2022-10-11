@@ -361,7 +361,15 @@ def send_user(message):
                 # Send message and close the buttons
                 langteabot.send_message(message.chat.id, prompts[message.text], reply_markup=telebot.types.ReplyKeyboardRemove())
         else:
-            langteabot.reply_to(message, "lambda")
+            # langteabot.reply_to(message, "lambda")
+            url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/regular_message'
+            data = {
+                "user_id": message.from_user.id,
+                "message": message.text
+                }
+            request_str = json.dumps(data)
+            content = requests.post(url, json=request_str)    
+            langteabot.reply_to(message, content.text)
     except Exception as e:
         executebot.reply_to(message, e)
 
