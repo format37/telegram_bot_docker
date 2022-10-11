@@ -301,9 +301,9 @@ def prompts_list(message):
             prompts = json.load(f)
         for prompt in prompts:
             keyboard.add(telebot.types.KeyboardButton(prompt))
-        executebot.send_message(message.chat.id, "Choose your interlocutor", reply_markup=keyboard)
+        langteabot.send_message(message.chat.id, "Choose your interlocutor", reply_markup=keyboard)
     except Exception as e:
-        executebot.reply_to(message, e)
+        langteabot.reply_to(message, e)
 
 @langteabot.message_handler(commands=['set_prompt'])
 def echo_message(message):
@@ -356,12 +356,12 @@ def send_user(message):
                 request_str = json.dumps(data)
                 content = requests.post(url, json=request_str)
                 # Send message and close the buttons
-                executebot.send_message(message.chat.id, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
+                langteabot.send_message(message.chat.id, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
             else:
                 # Send message and close the buttons
-                executebot.send_message(message.chat.id, prompts[message.text], reply_markup=telebot.types.ReplyKeyboardRemove())
+                langteabot.send_message(message.chat.id, prompts[message.text], reply_markup=telebot.types.ReplyKeyboardRemove())
         else:
-            executebot.reply_to(message, "lambda")
+            langteabot.reply_to(message, "lambda")
     except Exception as e:
         executebot.reply_to(message, e)
 
