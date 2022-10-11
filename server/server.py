@@ -363,7 +363,7 @@ def send_user(message):
                 url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_prompt_selection'
                 data = {
                     "user_id": message.from_user.id,
-                    "prompt": message.text
+                    "prompt": prompts[message.text]
                     }
                 request_str = json.dumps(data)
                 content = requests.post(url, json=request_str)
