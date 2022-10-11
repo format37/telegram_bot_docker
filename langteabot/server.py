@@ -228,6 +228,22 @@ async def call_regular_message(request):
     return web.Response(text=answer, content_type="text/html")
 
 
+async def call_set_prompt_selection(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
+    # read prompt from user config
+    config = read_config(user_id)
+    config['prompt'] = data['message']
+    config['init_prompt'] = data['message']
+    config['last_cmd'] = 'regular_message'
+    answer = 'Prompt set successfull:\n'+data['message']
+    
+    save_config(config, user_id)
+    return web.Response(text=answer, content_type="text/html")
+
+
 async def call_voice(request):
     # get user_id and voice file from post request
     reader = await request.multipart()
@@ -357,6 +373,7 @@ def main():
     app.router.add_route('POST', '/show_names', call_show_names)
     app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
+    app.router.add_route('POST', '/set_prompt_selection', call_set_prompt_selection)
     app.router.add_route('POST', '/set_names', call_set_names)
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/check_balance', call_check_balance)

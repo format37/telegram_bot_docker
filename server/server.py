@@ -348,6 +348,7 @@ def send_user(message):
 
         if message.text in prompts:            
             if message.text == 'Customizable':
+                # Set prompt expectation
                 url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_prompt'
                 data = {
                     "user_id": message.from_user.id,
@@ -358,10 +359,20 @@ def send_user(message):
                 # Send message and close the buttons
                 langteabot.send_message(message.chat.id, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
             else:
+                # Set selected prompt
+                url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_prompt_selection'
+                data = {
+                    "user_id": message.from_user.id,
+                    "prompt": message.text
+                    }
+                request_str = json.dumps(data)
+                content = requests.post(url, json=request_str)
                 # Send message and close the buttons
-                langteabot.send_message(message.chat.id, prompts[message.text], reply_markup=telebot.types.ReplyKeyboardRemove())
+                langteabot.send_message(message.chat.id, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
+                # Send message and close the buttons
+                # langteabot.send_message(message.chat.id, prompts[message.text], reply_markup=telebot.types.ReplyKeyboardRemove())
         else:
-            # langteabot.reply_to(message, "lambda")
+            # Receive user's prompt
             url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/regular_message'
             data = {
                 "user_id": message.from_user.id,
