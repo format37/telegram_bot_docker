@@ -232,13 +232,13 @@ async def call_set_prompt_selection(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_prompt_selection')
     # read prompt from user config
     config = read_config(user_id)
-    config['prompt'] = data['message']
-    config['init_prompt'] = data['message']
+    config['prompt'] = data['prompt']
+    config['init_prompt'] = data['prompt']
     config['last_cmd'] = 'regular_message'
-    answer = 'Prompt set successfull:\n'+data['message']
+    answer = 'Prompt set successfull:\n'+data['prompt']
     
     save_config(config, user_id)
     return web.Response(text=answer, content_type="text/html")
