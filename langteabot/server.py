@@ -238,7 +238,7 @@ async def call_set_prompt_selection(request):
     config['prompt'] = data['prompt']
     config['init_prompt'] = data['prompt']
     config['last_cmd'] = 'regular_message'
-    answer = 'Prompt set successfull:\n'+data['prompt']
+    answer = data['prompt']
     
     save_config(config, user_id)
     return web.Response(text=answer, content_type="text/html")
