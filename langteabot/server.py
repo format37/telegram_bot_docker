@@ -358,7 +358,7 @@ async def call_check_balance(request):
     config = read_config(user_id)
     total_tokens = int(config['total_tokens'])
     # price = 0.06 base price
-    price = int(config['price'])
+    price = float(config['price'])
     balance = -total_tokens/1000*price
     # round
     balance = round(balance, 2)

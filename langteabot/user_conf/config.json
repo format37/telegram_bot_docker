@@ -5,5 +5,5 @@
     "init_prompt": "Two friends have a conversation for a random topic. Jane interesting about details of Alex's news. She also tells the same stories, which she met before.",
     "last_cmd": "start",
     "total_tokens": -71428,
-    "price": 0.05
+    "price": 0.02
 }
