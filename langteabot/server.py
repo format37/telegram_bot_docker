@@ -235,10 +235,12 @@ async def call_set_prompt_selection(request):
     logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_prompt_selection')
     # read prompt from user config
     config = read_config(user_id)
-    config['prompt'] = data['prompt']
-    config['init_prompt'] = data['prompt']
+    new_prompt = data['prompt'].replace('Alex', config['names'][0])
+    new_prompt = new_prompt.replace('Jane', config['names'][1])
+    config['prompt'] = new_prompt
+    config['init_prompt'] = new_prompt
     config['last_cmd'] = 'regular_message'
-    answer = data['prompt']
+    answer = new_prompt
     
     save_config(config, user_id)
     return web.Response(text=answer, content_type="text/html")
@@ -268,7 +270,7 @@ async def call_voice(request):
     # if user_id in granted_users:
 
     # check user balance
-    if float(config['total_tokens']) <= 0:
+    if int(config['total_tokens']) < 0:
 
         # generate a random token for the filename
         filename = str(uuid.uuid4())
@@ -357,7 +359,6 @@ async def call_check_balance(request):
     # read prompt from user config
     config = read_config(user_id)
     total_tokens = int(config['total_tokens'])
-    # price = 0.06 base price
     price = float(config['price'])
     balance = -total_tokens/1000*price
     # round
