@@ -189,7 +189,7 @@ def granted_user(user_id):
     try:
         user_id = int(user_id)
         if user_id in calcubot_blocked_users:
-            # logger.info('Blocked user: {}'.format(user_id))
+            logger.info('Blocked user: {}'.format(user_id))
             return False
     except Exception as e:
         logger.error(e)
@@ -213,10 +213,13 @@ def send_user(message):
             if not message.text.startswith('/cl '):
                 reaction = False
         if reaction:
-            # append datetime and expression to calcubot_logs/[user_id].csv
-            # splitter is ;
-            with open('calcubot_logs/'+str(message.from_user.id)+'.csv', 'a') as f:
-                f.write(str(dt.now())+';'+str(message.text)+'\n')
+            try:
+                # append datetime and expression to calcubot_logs/[user_id].csv
+                # splitter is ;
+                with open('calcubot_logs/'+str(message.from_user.id)+'.csv', 'a') as f:
+                    f.write(str(dt.now())+';'+str(message.text)+'\n')
+            except Exception as e:
+                logger.error(e)
             data = {
                 "message": message.text,
                 "user_id": message.from_user.id,
