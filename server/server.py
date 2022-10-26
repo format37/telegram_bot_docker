@@ -8,6 +8,7 @@ from aiohttp import web
 import telebot
 import json
 import logging
+import pandas as pd
 
 # init logging
 logging.basicConfig(level=logging.INFO)
@@ -27,6 +28,15 @@ WEBHOOK_SSL_PRIV = 'webhook_pkey.pem'
 #
 # When asked for "Common Name (e.g. server FQDN or YOUR name)" you should reply
 # with the same value in you put in WEBHOOK_HOST
+
+logger.info('reading calcubot blocked users')
+df = pd.read_csv('calcubot_blocked/users.csv')
+df = pd.DataFrame(df.user)
+df['user'] = df.user.astype(int)
+df = df.sort_values(by=['user'])
+calcubot_blocked_users = set(df['user'])
+logger.info('Loaded '+str(len(calcubot_blocked_users))+' calcubot blocked users')
+
 
 
 async def call_test(request):
@@ -174,82 +184,95 @@ def send_user(message):
 calcubot	= default_bot_init('CALCUBOT_TOKEN')
 bots.append(calcubot)
 
+def granted_user(user_id):
+    try:
+        user_id = int(user_id)
+        if user_id in calcubot_blocked_users:
+            # logger.info('Blocked user: {}'.format(user_id))
+            return False
+    except Exception as e:
+        logger.error(e)
+        return False
+
 @calcubot.message_handler(commands=['help', 'start'])
 def send_help(message):
-    link = 'https://service.icecorp.ru/help.mp4'
-    calcubot.send_video(message.chat.id, link, reply_to_message_id = str(message))
+    if granted_user(message.from_user.id):
+        link = 'https://service.icecorp.ru/help.mp4'
+        calcubot.send_video(message.chat.id, link, reply_to_message_id = str(message))
 
 
 @calcubot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
-    url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
-    reaction = True
-    # check is it group ?
-    if message.chat.type == 'group' or message.chat.type == 'supergroup':
-        # check, does message contains '/cl ' ?
-        if not message.text.startswith('/cl '):
-            reaction = False
-    if reaction:
-        data = {
-            "message": message.text,
-            "user_id": message.from_user.id,
-            "inline": 0
-            }
-        request_str = json.dumps(data)
-        answer = json.loads(requests.post(url, json=request_str).text)
-        calcubot.reply_to(message, answer)
+    if granted_user(message.from_user.id):
+        url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
+        reaction = True
+        # check is it group ?
+        if message.chat.type == 'group' or message.chat.type == 'supergroup':
+            # check, does message contains '/cl ' ?
+            if not message.text.startswith('/cl '):
+                reaction = False
+        if reaction:
+            data = {
+                "message": message.text,
+                "user_id": message.from_user.id,
+                "inline": 0
+                }
+            request_str = json.dumps(data)
+            answer = json.loads(requests.post(url, json=request_str).text)
+            calcubot.reply_to(message, answer)
 
 @calcubot.inline_handler(func=lambda chosen_inline_result: True)
 def query_text(inline_query):
-    message_text_prepared = inline_query.query.strip()
-    if message_text_prepared!='':
-        url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
-        data = {
-            "message": inline_query.query,
-            "inline": 1
-            }
-        request_str = json.dumps(data)
-        answer = json.loads(requests.post(url, json=request_str).text)
+    if granted_user(inline_query.from_user.id):
+        message_text_prepared = inline_query.query.strip()
+        if message_text_prepared!='':
+            url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
+            data = {
+                "message": inline_query.query,
+                "inline": 1
+                }
+            request_str = json.dumps(data)
+            answer = json.loads(requests.post(url, json=request_str).text)
 
-        # answer 0        
-        r0 = telebot.types.InlineQueryResultArticle(
-            '0', 
-            answer[0], 
-            telebot.types.InputTextMessageContent( answer[0] ),
-            )
-
-        # answer 1        
-        r1 = telebot.types.InlineQueryResultArticle(
-            '1', 
-            answer[1], 
-            telebot.types.InputTextMessageContent( answer[1] ),
-            )
-
-        # answer 2
-        r2 = telebot.types.InlineQueryResultArticle(
-            '2', 
-            answer[2], 
-            telebot.types.InputTextMessageContent( answer[2] ), 
-            )
-
-        answer = [r0,r1,r2]
-
-        calcubot.answer_inline_query(
-            inline_query.id, 
-            answer, 
-            cache_time=0, 
-            is_personal=True
-            ) # updated
-    else:
-        answer	= ['Empty expression..']
-        responce = [
-            telebot.types.InlineQueryResultArticle(
-                'result', 
+            # answer 0        
+            r0 = telebot.types.InlineQueryResultArticle(
+                '0', 
                 answer[0], 
-                telebot.types.InputTextMessageContent( answer[0] )
+                telebot.types.InputTextMessageContent( answer[0] ),
                 )
-            ] 
-        calcubot.answer_inline_query(inline_query.id, responce)
+
+            # answer 1        
+            r1 = telebot.types.InlineQueryResultArticle(
+                '1', 
+                answer[1], 
+                telebot.types.InputTextMessageContent( answer[1] ),
+                )
+
+            # answer 2
+            r2 = telebot.types.InlineQueryResultArticle(
+                '2', 
+                answer[2], 
+                telebot.types.InputTextMessageContent( answer[2] ), 
+                )
+
+            answer = [r0,r1,r2]
+
+            calcubot.answer_inline_query(
+                inline_query.id, 
+                answer, 
+                cache_time=0, 
+                is_personal=True
+                ) # updated
+        else:
+            answer	= ['Empty expression..']
+            responce = [
+                telebot.types.InlineQueryResultArticle(
+                    'result', 
+                    answer[0], 
+                    telebot.types.InputTextMessageContent( answer[0] )
+                    )
+                ] 
+            calcubot.answer_inline_query(inline_query.id, responce)
 
 # === calcubot --
 

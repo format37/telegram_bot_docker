@@ -6,6 +6,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - ./langteabot/data:/server/data
+      - ./calcubot/blocked:/server/calcubot_blocked
     build: server
     logging:
       options:

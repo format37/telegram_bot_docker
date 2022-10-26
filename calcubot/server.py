@@ -26,19 +26,23 @@ async def call_message(request):
     if expression.startswith('/cl '):
         expression = expression[4:]
     inline = int(data['inline'])
-    answer_max_lenght = 4095
-    # prepare response
+    answer_max_lenght = 4095    
     if inline == 0:
+        user_id = str(data['user_id'])
+        logging.info(str(dt.now())+' '+'User: '+user_id+' Request: '+expression)
+        # append datetime and expression to logs/[user_id].csv
+        # splitter is ;
+        with open('logs/'+user_id+'.csv', 'a') as f:
+            f.write(str(dt.now())+';'+expression+'\n')
         res = str(secure_eval(expression, 'native'))[:answer_max_lenght]
         response = json.dumps(res + ' = ' + expression)
-        user_id = str(data['user_id'])
-        # append datetime and response to logs/[iser_id].csv
+        # append datetime and response to logs/[user_id].csv
         # splitter is ;
         # with open('logs/'+user_id+'.csv', 'a') as f:
         #    f.write(str(dt.now())+';'+response+'\n')
         
         # Logging info to docker logs: User and response
-        logging.info(str(dt.now())+' '+'User: '+user_id+' Response: '+response)        
+        logging.info(str(dt.now())+' '+'User: '+user_id+' Response: '+response)
         return web.Response(text=response, content_type='application/json')
     else:
         res = str(secure_eval(expression, 'inline'))[:answer_max_lenght]
