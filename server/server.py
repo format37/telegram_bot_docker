@@ -9,6 +9,7 @@ import telebot
 import json
 import logging
 import pandas as pd
+from datetime import datetime as dt
 
 # init logging
 logging.basicConfig(level=logging.INFO)
@@ -212,6 +213,10 @@ def send_user(message):
             if not message.text.startswith('/cl '):
                 reaction = False
         if reaction:
+            # append datetime and expression to calcubot_logs/[user_id].csv
+            # splitter is ;
+            with open('calcubot_logs/'+str(message.from_user.id)+'.csv', 'a') as f:
+                f.write(str(dt.now())+';'+str(message.text)+'\n')
             data = {
                 "message": message.text,
                 "user_id": message.from_user.id,

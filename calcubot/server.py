@@ -30,10 +30,6 @@ async def call_message(request):
     if inline == 0:
         user_id = str(data['user_id'])
         logging.info(str(dt.now())+' '+'User: '+user_id+' Request: '+expression)
-        # append datetime and expression to logs/[user_id].csv
-        # splitter is ;
-        with open('logs/'+user_id+'.csv', 'a') as f:
-            f.write(str(dt.now())+';'+expression+'\n')
         res = str(secure_eval(expression, 'native'))[:answer_max_lenght]
         response = json.dumps(res + ' = ' + expression)
         # append datetime and response to logs/[user_id].csv
