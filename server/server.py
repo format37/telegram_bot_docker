@@ -230,6 +230,8 @@ def send_user(message):
             request_str = json.dumps(data)
             answer = json.loads(requests.post(url, json=request_str).text)
             calcubot.reply_to(message, answer)
+    else:
+        calcubot.reply_to(message, 'Service unavailable')
 
 @calcubot.inline_handler(func=lambda chosen_inline_result: True)
 def query_text(inline_query):
@@ -283,6 +285,16 @@ def query_text(inline_query):
                     )
                 ] 
             calcubot.answer_inline_query(inline_query.id, responce)
+    else:
+        answer	= ['Service unavailable']
+        responce = [
+            telebot.types.InlineQueryResultArticle(
+                'result', 
+                answer[0], 
+                telebot.types.InputTextMessageContent( answer[0] )
+                )
+            ] 
+        calcubot.answer_inline_query(inline_query.id, responce)
 
 # === calcubot --
 
