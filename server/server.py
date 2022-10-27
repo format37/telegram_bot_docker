@@ -191,6 +191,8 @@ def granted_user(user_id):
         if user_id in calcubot_blocked_users:
             logger.info('Blocked user: {}'.format(user_id))
             return False
+        else:
+            return True
     except Exception as e:
         logger.error(e)
         return False
