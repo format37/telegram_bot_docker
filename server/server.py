@@ -10,6 +10,7 @@ import json
 import logging
 import pandas as pd
 from datetime import datetime as dt
+import re
 
 # init logging
 logging.basicConfig(level=logging.INFO)
@@ -185,6 +186,7 @@ def send_user(message):
 calcubot	= default_bot_init('CALCUBOT_TOKEN')
 bots.append(calcubot)
 
+
 def granted_user(user_id):
     try:
         user_id = int(user_id)
@@ -196,6 +198,51 @@ def granted_user(user_id):
     except Exception as e:
         logger.error(e)
         return False
+
+
+def collect_logs():
+    try:
+        # read all files in logs/
+        path = 'logs'
+        files = os.listdir(path)
+
+        # create a list of dataframes
+        dfs = []
+        for file in files:
+            # if file=='5246634085.csv':
+            with open(path + '/' + file, 'r') as f:
+                # read file to a list of strings
+                lines = f.readlines()
+                user = file[:-4]
+                text = ''
+                # create a list of lists            
+                for line in lines:
+                    # check, is line starts from re like: 2022-10-27 13:33:43.906742;
+                    if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{6};', line):
+                        if len(text)>0:
+                            record = [[user, date, text]]
+                            df = pd.DataFrame(record, columns=['user', 'date', 'request'])
+                            dfs.append(df)
+                        first_semicolon = line.find(';')
+                        left = line[:first_semicolon]
+                        date = dt.strptime(left, '%Y-%m-%d %H:%M:%S.%f')
+                        # print(date)
+                        text = line[first_semicolon + 1:]
+                    else:
+                        text += line
+                if len(text)>0:
+                    record = [[user, date, text]]
+                    df = pd.DataFrame(record, columns=['user', 'date', 'request'])
+                    dfs.append(df)
+
+        # concat all dfs to a single one
+        df = pd.concat(dfs)
+        df.to_csv('requests.csv')
+        return 'requests.csv'
+    except Exception as e:
+        logger.error(e)
+        return 'error'
+
 
 @calcubot.message_handler(commands=['help', 'start'])
 def send_help(message):
@@ -214,6 +261,15 @@ def send_user(message):
             # check, does message contains '/cl ' ?
             if not message.text.startswith('/cl '):
                 reaction = False
+        
+        if message.from_user.id == 106129214 and message.text.startswith('/logs'):
+            file = collect_logs()
+            if file == 'error':
+                calcubot.reply_to(message, 'error')
+            else:
+                calcubot.send_document(message.chat.id, open(file, 'rb'))
+                reaction = False
+
         if reaction:
             try:
                 # append datetime and expression to calcubot_logs/[user_id].csv
