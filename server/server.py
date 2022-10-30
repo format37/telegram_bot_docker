@@ -203,7 +203,7 @@ def granted_user(user_id):
 def collect_logs():
     try:
         # read all files in logs/
-        path = 'logs'
+        path = 'calcubot_logs/'
         files = os.listdir(path)
 
         # create a list of dataframes
