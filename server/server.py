@@ -97,7 +97,7 @@ def send_help(message):
 # Inline
 @icebergservicebot.inline_handler(lambda query: len(query.query) > 0)
 def query_text(inline_query):
-    logger.info('inline query', inline_query)
+    logger.info('inline query: '+str(inline_query))
     try:
         # Get information from message, which in reply to
         user_id = inline_query.from_user.id
@@ -105,7 +105,7 @@ def query_text(inline_query):
         results = []
         if inline_query.message:
             message_id = inline_query.message.message_id
-            logger.info('inline reply to message_id', message_id)
+            logger.info('inline reply to message_id: '+str(message_id))
             answer = ['inline reply to message_id: ' + str(message_id)]
             r0 = telebot.types.InlineQueryResultArticle(
                 '0',
