@@ -85,7 +85,6 @@ async def handle(request):
 bots = []
 
 # === @icebergservicebot ++
-
 icebergservicebot = default_bot_init('ICEBERGSERVICEBOT_TOKEN')
 bots.append(icebergservicebot)
 
@@ -96,8 +95,6 @@ def send_help(message):
     icebergservicebot.reply_to(message, "Hello, I'm icebergservicebot")
 
 # Inline
-
-
 @icebergservicebot.inline_handler(lambda query: len(query.query) > 0)
 def query_text(inline_query):
     logger.info('inline query', inline_query)
@@ -132,87 +129,6 @@ def query_text(inline_query):
     except Exception as e:
         logger.error(e)
         return
-
-    """try:
-        if granted_user(inline_query.from_user.id):
-            r = requests.get('https://iceberg-service.herokuapp.com/iceberg/inline?query='+inline_query.query)
-            results = []
-            for i in r.json():
-                results.append(telebot.types.InlineQueryResultArticle(
-                    id=i['id'],
-                    title=i['title'],
-                    input_message_content=telebot.types.InputTextMessageContent(
-                        message_text=i['message_text']
-                    )
-                ))
-            icebergservicebot.answer_inline_query(inline_query.id, results)
-    except Exception as e:
-        logger.error(e)"""
-
-
-"""@calcubot.inline_handler(func=lambda chosen_inline_result: True)
-def query_text(inline_query):
-    if granted_user(inline_query.from_user.id):
-        message_text_prepared = inline_query.query.strip()
-        if message_text_prepared!='':
-            url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
-            data = {
-                "message": inline_query.query,
-                "inline": 1
-                }
-            request_str = json.dumps(data)
-            answer = json.loads(requests.post(url, json=request_str).text)
-
-            # answer 0        
-            r0 = telebot.types.InlineQueryResultArticle(
-                '0', 
-                answer[0], 
-                telebot.types.InputTextMessageContent( answer[0] ),
-                )
-
-            # answer 1        
-            r1 = telebot.types.InlineQueryResultArticle(
-                '1', 
-                answer[1], 
-                telebot.types.InputTextMessageContent( answer[1] ),
-                )
-
-            # answer 2
-            r2 = telebot.types.InlineQueryResultArticle(
-                '2', 
-                answer[2], 
-                telebot.types.InputTextMessageContent( answer[2] ), 
-                )
-
-            answer = [r0,r1,r2]
-
-            calcubot.answer_inline_query(
-                inline_query.id, 
-                answer, 
-                cache_time=0, 
-                is_personal=True
-                ) # updated
-        else:
-            answer	= ['Empty expression..']
-            responce = [
-                telebot.types.InlineQueryResultArticle(
-                    'result', 
-                    answer[0], 
-                    telebot.types.InputTextMessageContent( answer[0] )
-                    )
-                ] 
-            calcubot.answer_inline_query(inline_query.id, responce)
-    else:
-        answer	= ['Service unavailable']
-        responce = [
-            telebot.types.InlineQueryResultArticle(
-                'result', 
-                answer[0], 
-                telebot.types.InputTextMessageContent( answer[0] )
-                )
-            ] 
-        calcubot.answer_inline_query(inline_query.id, responce)"""
-
 # === @icebergservicebot --
 
 
