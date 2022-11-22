@@ -89,51 +89,25 @@ bots = []
 icebergservicebot = default_bot_init('ICEBERGSERVICEBOT_TOKEN')
 bots.append(icebergservicebot)
 
-
 @icebergservicebot.message_handler(commands=['help', 'start'])
 def send_help(message):
     # send message hello
     icebergservicebot.reply_to(message, "Hello, I'm icebergservicebot")
 
-# Inline query handler
-@icebergservicebot.inline_handler(lambda query: len(query.query) > 0)
-def query_text(inline_query):
-    logger.info('inline query: '+str(inline_query))
-    try:
-        # Save inline_query using pickle
-        with open('inline_query.pickle', 'wb') as handle:
-            pickle.dump(inline_query, handle, protocol=pickle.HIGHEST_PROTOCOL)
-        return
-        user_id = inline_query.from_user.id
-        # Reply to id
-        reply_id = inline_query.id
-        results = []
-        if inline_query.message:
-            message_id = inline_query.message.message_id
-            logger.info('inline reply to message_id: '+str(message_id))
-            answer = ['inline reply to message_id: ' + str(message_id)]
-            r0 = telebot.types.InlineQueryResultArticle(
-                '0',
-                answer[0],
-                telebot.types.InputTextMessageContent(answer[0]),
-            )
-        else:
-            logger.info('inline query without message_id')
-            answer = ['inline query without message_id']
-            r0 = telebot.types.InlineQueryResultArticle(
-                '0',
-                answer[0],
-                telebot.types.InputTextMessageContent(answer[0]),
-            )
-        icebergservicebot.answer_inline_query(
-                inline_query.id, 
-                answer, 
-                cache_time=0, 
-                is_personal=True
-                ) # updated
-    except Exception as e:
-        logger.error(e)
-        return
+# Messages in group, redirected from other groups
+@icebergservicebot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_all(message):
+    # Check the redirected message from
+    # other groups
+    if message.chat.type == 'group':
+        if message.forward_from_chat:
+            # Information about the group
+            reply = 'This message is from group: '+message.forward_from_chat.title
+            logger.info(reply)
+            # Information about the initial user
+            reply += '\nUser id: '+str(message.forward_from_user.id)
+            logger.info(reply)
+            icebergservicebot.reply_to(message, reply)
 # === @icebergservicebot --
 
 
