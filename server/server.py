@@ -11,6 +11,7 @@ import logging
 import pandas as pd
 from datetime import datetime as dt
 import re
+import pickle
 
 # init logging
 logging.basicConfig(level=logging.INFO)
@@ -94,14 +95,18 @@ def send_help(message):
     # send message hello
     icebergservicebot.reply_to(message, "Hello, I'm icebergservicebot")
 
-# Inline
+# Inline query handler
 @icebergservicebot.inline_handler(lambda query: len(query.query) > 0)
 def query_text(inline_query):
     logger.info('inline query: '+str(inline_query))
     try:
-        # Get information from message, which in reply to
+        # Save inline_query using pickle
+        with open('inline_query.pickle', 'wb') as handle:
+            pickle.dump(inline_query, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        return
         user_id = inline_query.from_user.id
-        # If inline query was as answer to message, get message id
+        # Reply to id
+        reply_id = inline_query.id
         results = []
         if inline_query.message:
             message_id = inline_query.message.message_id
