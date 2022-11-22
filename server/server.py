@@ -98,9 +98,12 @@ def send_help(message):
 @icebergservicebot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_all(message):
     try:
+        logger.info('icebergservicebot message_handler: '+str(message))
+        logger.info('chat type: '+str(message.chat.type))
         # Check the redirected message from
         # other groups
         if message.chat.type == 'group':
+            logger.info('forward from chat: '+str(message.forward_from_chat))
             if message.forward_from_chat:
                 # Information about the group
                 reply = 'This message is from group: '+message.forward_from_chat.title
