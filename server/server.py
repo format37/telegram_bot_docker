@@ -97,17 +97,20 @@ def send_help(message):
 # Messages in group, redirected from other groups
 @icebergservicebot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_all(message):
-    # Check the redirected message from
-    # other groups
-    if message.chat.type == 'group':
-        if message.forward_from_chat:
-            # Information about the group
-            reply = 'This message is from group: '+message.forward_from_chat.title
-            logger.info(reply)
-            # Information about the initial user
-            reply += '\nUser id: '+str(message.forward_from_user.id)
-            logger.info(reply)
-            icebergservicebot.reply_to(message, reply)
+    try:
+        # Check the redirected message from
+        # other groups
+        if message.chat.type == 'group':
+            if message.forward_from_chat:
+                # Information about the group
+                reply = 'This message is from group: '+message.forward_from_chat.title
+                logger.info(reply)
+                # Information about the initial user
+                reply += '\nUser id: '+str(message.forward_from_user.id)
+                logger.info(reply)
+                icebergservicebot.reply_to(message, reply)
+    except Exception as e:
+        logger.error(e)
 # === @icebergservicebot --
 
 
