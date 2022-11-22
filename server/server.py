@@ -101,7 +101,7 @@ def echo_all(message):
         logger.info('forward from: '+str(message.forward_from))
         if message.forward_from is not None:
             # Information about the group
-            reply = 'This message is from user id: '+message.forward_from.id
+            reply = 'This message is from user id: '+str(message.forward_from.id)
             logger.info(reply)
             icebergservicebot.reply_to(message, reply)
     except Exception as e:
