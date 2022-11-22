@@ -98,12 +98,14 @@ def send_help(message):
 @icebergservicebot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_all(message):
     try:
-        logger.info('forward from: '+str(message.forward_from))
-        if message.forward_from is not None:
-            # Information about the group
-            reply = 'This message is from user id: '+str(message.forward_from.id)
-            logger.info(reply)
-            icebergservicebot.reply_to(message, reply)
+        granted_chats = ['-1001114573373']
+        if str(message.chat.id) in granted_chats:
+            if message.forward_from is not None:
+                # logger.info('forward from: '+str(message.forward_from))
+                # Information about the group
+                reply = 'This message is from user id: '+str(message.forward_from.id)
+                logger.info(reply)
+                icebergservicebot.reply_to(message, reply)
     except Exception as e:
         logger.error(e)
 # === @icebergservicebot --
