@@ -77,7 +77,7 @@ def tts(tts_text, filename):
 def text_davinci(prompt, stop_words):
     openai.api_key = os.getenv("PHRASE_SEED")
     return json.loads(str(openai.Completion.create(
-      engine="text-davinci-002",
+      engine="text-davinci-003",
       prompt=prompt,
       temperature=0.9,
       max_tokens=150,

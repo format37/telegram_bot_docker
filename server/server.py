@@ -94,6 +94,18 @@ def send_help(message):
     # send message hello
     icebergservicebot.reply_to(message, "Hello, I'm icebergservicebot")
 
+@icebergservicebot.message_handler(commands=['users'])
+def send_help(message):
+    group_id = '-1001616037590'
+    user_id = '10645487875'
+    # Check is user exists in group now
+    try:
+        icebergservicebot.get_chat_member(group_id, user_id)
+        icebergservicebot.reply_to(message, "User exists")
+    except:
+        icebergservicebot.reply_to(message, "User not exists")        
+
+
 # Messages in group, redirected from other groups
 @icebergservicebot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_all(message):
