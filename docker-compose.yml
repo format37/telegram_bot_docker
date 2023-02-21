@@ -1,13 +1,13 @@
 version: '3.8'
 services:
 
-  server: 
+  server:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - ./langteabot/data:/server/data
       - ./calcubot/blocked:/server/calcubot_blocked
-      - ./calcubot/logs:/server/calcubot_logs      
+      - ./calcubot/logs:/server/calcubot_logs
     build: server
     logging:
       options:
