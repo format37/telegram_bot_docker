@@ -156,11 +156,11 @@ def send_help(message):
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    logger.info(str(content))
+    # logger.info(str(content))
     # Response was prepared like: return jsonify({"user_id": user_id})
     # Log the user_id value
-    logger.info(content.json()['user_id'])
-    langteabot.reply_to(message, "content.text "+str(content.text))
+    # logger.info(content.json()['user_id'])
+    executebot.reply_to(message, "result: "+str(content.json()['user_id']))
 # === @executebot --
 
 
