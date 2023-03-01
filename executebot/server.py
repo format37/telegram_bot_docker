@@ -25,7 +25,7 @@ def call_request():
     with open("data/users.txt", "r") as f:
         userlist = f.read().splitlines()
     # replace new line
-    userlist = [x.replace("\n", "") for x in userlist]
+    userlist = [int(x.replace("\n", "")) for x in userlist]
     logger.info("userlist: {}".format(userlist))
     if user_id in userlist:
         result = "ok"
