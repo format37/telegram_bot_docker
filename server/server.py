@@ -156,6 +156,7 @@ def send_help(message):
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
+    logger.info(str(content))
     langteabot.reply_to(message, content.text)
 # === @executebot --
 
