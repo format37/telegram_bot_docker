@@ -157,7 +157,10 @@ def send_help(message):
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     logger.info(str(content))
-    langteabot.reply_to(message, content.text)
+    # Response was prepared like: return jsonify({"user_id": user_id})
+    # Log the user_id value
+    logger.info(content.json()['user_id'])
+    langteabot.reply_to(message, "content.text "+str(content.text))
 # === @executebot --
 
 
