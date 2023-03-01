@@ -144,7 +144,6 @@ def send_help(message):
 
 
 # === @executebot ++
-
 executebot = default_bot_init('EXECUTEBOT_TOKEN')
 bots.append(executebot)
 
@@ -153,42 +152,6 @@ bots.append(executebot)
 def send_help(message):
     # send message hello
     executebot.reply_to(message, "Hello, I'm ExecuteBot")
-
-
-@executebot.message_handler(commands=['prompts'])
-def prompts_list(message):
-    # Keyboard
-    keyboard = telebot.types.ReplyKeyboardMarkup(
-        row_width=1, resize_keyboard=True)
-    try:
-        data_path = 'data/'
-        with open(data_path+'prompts.json', 'r') as f:
-            prompts = json.load(f)
-        for prompt in prompts:
-            keyboard.add(telebot.types.KeyboardButton(prompt))
-        executebot.send_message(
-            message.chat.id, "Choose your interlocutor", reply_markup=keyboard)
-    except Exception as e:
-        executebot.reply_to(message, e)
-
-
-@executebot.message_handler(func=lambda message: True, content_types=['text'])
-def send_user(message):
-    try:
-        data_path = 'data/'
-        with open(data_path+'prompts.json', 'r') as f:
-            prompts = json.load(f)
-
-        if message.text in prompts:
-            # executebot.send_message(message.chat.id, prompts[message.text])
-            # Send message and close the buttons
-            executebot.send_message(
-                message.chat.id, prompts[message.text], reply_markup=telebot.types.ReplyKeyboardRemove())
-        else:
-            executebot.reply_to(message, "lambda")
-    except Exception as e:
-        executebot.reply_to(message, e)
-
 # === @executebot --
 
 

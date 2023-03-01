@@ -80,3 +80,20 @@ services:
     environment:
       - TZ=Europe/Moscow
       - PORT=4202
+
+  executebot:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./executebot/data:/app/data
+    build: executebot
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    dns: 0.0.0.0
+    ports:
+      - 4203:4203
+    environment:
+      - TZ=Europe/Moscow
+      - PORT=4203
