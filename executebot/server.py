@@ -16,10 +16,8 @@ def call_test():
 def call_request():
 	r = request.get_json()
 	logger.info("request data: {}".format(r))
-	var_a = int(r["var_a"])
-	var_b = int(r["var_b"])
-	var_c = var_a + var_b
-	return jsonify({"var_c": var_c})
+	user_id = r["user_id"]
+	return jsonify({"text": user_id})
 
 
 if __name__ == "__main__":

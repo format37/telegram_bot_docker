@@ -27,6 +27,7 @@ services:
       - HCWBOT_PORT=4202
       - ID37BOT_TOKEN=
       - EXECUTEBOT_TOKEN=
+      - EXECUTEBOT_PORT=4202
 
   langteabot:
     volumes:

@@ -147,11 +147,16 @@ def send_help(message):
 executebot = default_bot_init('EXECUTEBOT_TOKEN')
 bots.append(executebot)
 
-
 @executebot.message_handler(commands=['help', 'start'])
 def send_help(message):
     # send message hello
-    executebot.reply_to(message, "Hello, I'm ExecuteBot")
+    # executebot.reply_to(message, "Hello, I'm ExecuteBot")
+    url = 'http://localhost:' + \
+        os.environ.get('EXECUTEBOT_PORT')+'/request'
+    data = {"user_id": message.from_user.id}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    langteabot.reply_to(message, content.text)
 # === @executebot --
 
 
