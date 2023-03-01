@@ -155,7 +155,7 @@ def send_help(message):
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    executebot.reply_to(message, "result: "+str(content.json()['user_id']))
+    executebot.reply_to(message, "result: "+str(content.json()['result']))
 # === @executebot --
 
 
