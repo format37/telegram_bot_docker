@@ -150,16 +150,11 @@ bots.append(executebot)
 @executebot.message_handler(commands=['help', 'start'])
 def send_help(message):
     # send message hello
-    # executebot.reply_to(message, "Hello, I'm ExecuteBot")
     url = 'http://localhost:' + \
         os.environ.get('EXECUTEBOT_PORT')+'/request'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    # logger.info(str(content))
-    # Response was prepared like: return jsonify({"user_id": user_id})
-    # Log the user_id value
-    # logger.info(content.json()['user_id'])
     executebot.reply_to(message, "result: "+str(content.json()['user_id']))
 # === @executebot --
 
