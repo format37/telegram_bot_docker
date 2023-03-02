@@ -15,7 +15,7 @@ def call_test():
 
 
 @app.route("/start", methods=["POST"])
-def call_request():
+def call_start():
     r = request.get_json()
     logger.info("request data: {}".format(r))
     # Assuming r is a JSON-formatted string
@@ -37,7 +37,7 @@ def call_request():
 
 
 @app.route("/inline", methods=["POST"])
-def call_request():
+def call_inline():
     r = request.get_json()
     logger.info("request data: {}".format(r))
     # Assuming r is a JSON-formatted string
