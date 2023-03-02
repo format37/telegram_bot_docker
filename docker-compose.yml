@@ -98,3 +98,4 @@ services:
     environment:
       - TZ=Europe/Moscow
       - PORT=4203
+      - PHRASE_SEED=

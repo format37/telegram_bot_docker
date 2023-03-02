@@ -168,7 +168,6 @@ def query_text(inline_query):
         }
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    # executebot.reply_to(inline_query.query, ""+str(content.json()['result']))
     
     # answer 0
     r0 = telebot.types.InlineQueryResultArticle(

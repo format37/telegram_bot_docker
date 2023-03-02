@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify, Response
 import logging
 import json
+import openai
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -51,7 +52,18 @@ def call_inline():
     userlist = [int(x) for x in userlist]
     logger.info("userlist: {}".format(userlist))
     if user_id in userlist:
-        result = "ok"
+        
+        query = r_dict["query"]
+        openai.api_key = os.getenv("PHRASE_SEED")
+        answer = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": query}
+            ]
+        )
+        result = answer['choices'][0]['message']['content']
+
     else:
         result = "You are not allowed to access this service"
     return jsonify({"result": result})
