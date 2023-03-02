@@ -3,5 +3,6 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt --no-cache-dir
 COPY server.py /app
+COPY openai_test.py /app
 ENTRYPOINT ["python"]
 CMD ["server.py"]
