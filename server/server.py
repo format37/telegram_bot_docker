@@ -147,15 +147,43 @@ def send_help(message):
 executebot = default_bot_init('EXECUTEBOT_TOKEN')
 bots.append(executebot)
 
+
 @executebot.message_handler(commands=['help', 'start'])
-def send_help(message):
-    # send message hello
+def send_start(message):
     url = 'http://localhost:' + \
-        os.environ.get('EXECUTEBOT_PORT')+'/request'
+        os.environ.get('EXECUTEBOT_PORT')+'/start'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     executebot.reply_to(message, ""+str(content.json()['result']))
+
+
+@executebot.inline_handler(func=lambda chosen_inline_result: True)
+def query_text(inline_query):
+    url = 'http://localhost:' + \
+        os.environ.get('EXECUTEBOT_PORT')+'/inline'
+    data = {
+        "user_id": inline_query.from_user.id,
+        "query": inline_query.query
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    # executebot.reply_to(inline_query.query, ""+str(content.json()['result']))
+    
+    # answer 0
+    r0 = telebot.types.InlineQueryResultArticle(
+        '0',
+        content.json()['result'],
+        telebot.types.InputTextMessageContent(content.json()['result']),
+    )
+    answer = [r0]
+
+    executebot.answer_inline_query(
+        inline_query.id,
+        answer,
+        cache_time=0,
+        is_personal=True
+    )
 # === @executebot --
 
 

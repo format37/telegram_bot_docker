@@ -13,7 +13,8 @@ app = Flask(__name__)
 def call_test():
     return "get ok"
 
-@app.route("/request", methods=["POST"])
+
+@app.route("/start", methods=["POST"])
 def call_request():
     r = request.get_json()
     logger.info("request data: {}".format(r))
@@ -22,10 +23,9 @@ def call_request():
     user_id = r_dict["user_id"]
     logger.info("user_id: {}".format(user_id))
     # Read userlist from data/users.txt
-    with open("data/users.txt", "r") as f:
+    with open("data/access.txt", "r") as f:
         userlist = f.read().splitlines()
     # replace new line
-    # userlist = [int(x.replace("\n", "")) for x in userlist]
     userlist = [int(x) for x in userlist]
     logger.info("userlist: {}".format(userlist))
     if user_id in userlist:
@@ -33,6 +33,27 @@ def call_request():
     else:
         result = "You are not allowed to access this service"
 
+    return jsonify({"result": result})
+
+
+@app.route("/inline", methods=["POST"])
+def call_request():
+    r = request.get_json()
+    logger.info("request data: {}".format(r))
+    # Assuming r is a JSON-formatted string
+    r_dict = json.loads(r)
+    user_id = r_dict["user_id"]
+    logger.info("user_id: {}".format(user_id))
+    # Read userlist from data/users.txt
+    with open("data/access.txt", "r") as f:
+        userlist = f.read().splitlines()
+    # replace new line
+    userlist = [int(x) for x in userlist]
+    logger.info("userlist: {}".format(userlist))
+    if user_id in userlist:
+        result = "ok"
+    else:
+        result = "You are not allowed to access this service"
     return jsonify({"result": result})
 
 
