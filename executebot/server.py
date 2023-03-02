@@ -59,9 +59,10 @@ def call_inline():
         model="gpt-3.5-turbo",
         messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": query}
+                {"role": "user", "content": str(query)}
             ]
         )
+        logger.info("answer: {}".format(answer))
         result = answer['choices'][0]['message']['content']
 
     else:
