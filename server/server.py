@@ -143,25 +143,25 @@ def send_help(message):
 # === @id37bot --
 
 
-# === @executebot ++
-executebot = default_bot_init('EXECUTEBOT_TOKEN')
-bots.append(executebot)
+# === @gptaidbot ++
+gptaidbot = default_bot_init('GPTAIDBOT_TOKEN')
+bots.append(gptaidbot)
 
 
-@executebot.message_handler(commands=['help', 'start'])
+@gptaidbot.message_handler(commands=['help', 'start'])
 def send_start(message):
     url = 'http://localhost:' + \
-        os.environ.get('EXECUTEBOT_PORT')+'/start'
+        os.environ.get('GPTAIDBOT_PORT')+'/start'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    executebot.reply_to(message, ""+str(content.json()['result']))
+    gptaidbot.reply_to(message, ""+str(content.json()['result']))
 
 
-@executebot.inline_handler(func=lambda chosen_inline_result: True)
+@gptaidbot.inline_handler(func=lambda chosen_inline_result: True)
 def query_text(inline_query):
     url = 'http://localhost:' + \
-        os.environ.get('EXECUTEBOT_PORT')+'/inline'
+        os.environ.get('GPTAID_PORT')+'/inline'
     data = {
         "user_id": inline_query.from_user.id,
         "query": inline_query.query
@@ -177,13 +177,13 @@ def query_text(inline_query):
     )
     answer = [r0]
 
-    executebot.answer_inline_query(
+    gptaidbot.answer_inline_query(
         inline_query.id,
         answer,
         cache_time=0,
         is_personal=True
     )
-# === @executebot --
+# === @gptaidbot --
 
 
 # === home_cleaners_watcher_bot ++
@@ -549,7 +549,7 @@ def send_user(message):
             content = requests.post(url, json=request_str)
             langteabot.reply_to(message, content.text)
     except Exception as e:
-        executebot.reply_to(message, e)
+        langteabot.reply_to(message, e)
 
 # receive audio from telegram
 

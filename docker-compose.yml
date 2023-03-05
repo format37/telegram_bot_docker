@@ -26,8 +26,8 @@ services:
       - HCWBOT_TOKEN=
       - HCWBOT_PORT=4202
       - ID37BOT_TOKEN=
-      - EXECUTEBOT_TOKEN=
-      - EXECUTEBOT_PORT=4202
+      - GPTAIDBOT_TOKEN=
+      - GPTAIDBOT_PORT=4203
 
   langteabot:
     volumes:
@@ -82,17 +82,16 @@ services:
       - TZ=Europe/Moscow
       - PORT=4202
 
-  executebot:
+  gptaidbot:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ./executebot/data:/app/data
-    build: executebot
+      - ./gptaidbot/data:/app/data
+    build: gptaidbot
     logging:
       options:
         max-size: "10m"
         max-file: "3"
-    dns: 0.0.0.0
     ports:
       - 4203:4203
     environment:
