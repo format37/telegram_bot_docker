@@ -140,6 +140,24 @@ async def call_set_prompt(request):
     return web.Response(text='Please, send me a new init prompt', content_type="text/html")
 
 
+async def update_settings(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' update_settings')
+    # read prompt from user config
+    config = read_config(user_id)
+    # set new prompt
+    # config['prompt'] = data['prompt']
+    # config['last_cmd'] = 'set_prompt'
+    for key in data['config']:
+        logger.info(key+': '+str(data['config'][key]))
+        config[key] = data['config'][key]
+    save_config(config, user_id)
+    return web.Response(text='Ok', content_type="text/html")
+
+
+
 async def call_regular_message(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)

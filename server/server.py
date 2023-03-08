@@ -385,6 +385,14 @@ def languages_list(message):
             logging.info(str(language))
             keyboard.add(telebot.types.KeyboardButton(language['name']))
         langteabot.send_message(message.chat.id, "Choose the voice language", reply_markup=keyboard)
+        # Update the user last cmd
+        url = 'http://localhost:' + os.environ.get('LANGTEABOT_PORT') + '/update_settings'
+        data = {
+            "user_id": message.from_user.id,
+            "config": [{'last_cmd': 'choose_language'}]
+        }
+        request_str = json.dumps(data)
+        requests.post(url, json=request_str)
     except Exception as e:
         langteabot.reply_to(message, e)
 
