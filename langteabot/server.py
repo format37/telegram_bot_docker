@@ -30,7 +30,7 @@ def accept_feature_extractor(phrases, accept):
     logger.info('stt: '+r.text)
     return r.text"""
 
-def language_parameters(config)
+def language_parameters(config):
     # Define the language code and name of the voice
     language_code = 'English'
     model = 'en-US-Neural2-F'
