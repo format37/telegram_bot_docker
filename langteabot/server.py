@@ -156,7 +156,6 @@ def reset_prompt(user_id):
     # read default prompt
     config = read_config(user_id)
     init_prompt = config['init_prompt']
-    chat_gpt_prompt = config['chat_gpt_prompt']
     chat_gpt_init_prompt = config['chat_gpt_init_prompt']
     total_tokens = config['total_tokens']
     names = config['names']
@@ -164,7 +163,7 @@ def reset_prompt(user_id):
     config['total_tokens'] = total_tokens
     config['prompt'] = init_prompt
     config['init_prompt'] = init_prompt
-    config['chat_gpt_prompt'] = chat_gpt_prompt
+    config['chat_gpt_prompt'] = chat_gpt_init_prompt
     config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
     config['names'] = names
     config['last_cmd'] = 'reset_prompt'
