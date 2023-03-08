@@ -438,7 +438,7 @@ def echo_message(message):
     langteabot.reply_to(message, content.text)
 
 
-@langteabot.message_handler(commands=['reset_prompt'])
+@langteabot.message_handler(commands=['reset'])
 def echo_message(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/reset_prompt'
     data = {"user_id": message.from_user.id}
