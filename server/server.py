@@ -401,9 +401,11 @@ def send_user(message):
         }
         request_str = json.dumps(data)
         content = requests.post(url, json=request_str)
-        # langteabot.reply_to(message, content.text)
+        # Only remove the keyboard
+        langteabot.send_message(message.chat.id, reply_markup=telebot.types.ReplyKeyboardRemove())
+        langteabot.reply_to(message, content.text)
         # Send message and close the buttons langteabot.send_message(message.chat.id, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
-        langteabot.reply_to(message, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
+        # langteabot.reply_to(message, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
     except Exception as e:
         langteabot.reply_to(message, e)
 
