@@ -383,7 +383,7 @@ def languages_list(message):
         with open(data_path+'languages.json', 'r') as f:
             languages = json.load(f)
         for language in languages:
-            keyboard.add(telebot.types.KeyboardButton(language))
+            keyboard.add(telebot.types.KeyboardButton(language['name']))
         langteabot.send_message(
             message.chat.id, "Choose the voice language", reply_markup=keyboard)
     except Exception as e:
