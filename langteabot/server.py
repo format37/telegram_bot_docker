@@ -24,22 +24,39 @@ def accept_feature_extractor(phrases, accept):
         phrases.append(accept_text)
 
 
-async def stt(uri, file_name, language_code):
+"""async def stt(uri, file_name, language_code):
     with open(file_name, 'rb') as f:
         r = requests.post(uri, files={'file': f}, data={'language_code': language_code})
     logger.info('stt: '+r.text)
-    return r.text
+    return r.text"""
 
+def language_parameters(config)
+    # Define the language code and name of the voice
+    language_code = 'English'
+    model = 'en-US-Neural2-F'
+    language = config['language']
+    data_path = 'data/'
+    with open(data_path+'languages.json', 'r') as f:
+        languages = json.load(f)
+    for language in languages.values():
+        if language['name'] == config['language']:
+            language_code = language['code']
+            model = language['female_model']
+            break
+    return language_code, model
 
-def tts(tts_text, filename):
+def tts(tts_text, filename, config):
     tts_server = os.environ.get('TTS_SERVER', '')
     # https://cloud.google.com/text-to-speech/docs/voices
     # https://cloud.google.com/text-to-speech
     logger.info('tts: '+tts_text)
+    
+    language_code, model = language_parameters(config)
+    
     data = {
         'text':tts_text,
-        'language':'en-US',
-        'model':'en-US-Neural2-F',
+        'language':language_code,
+        'model':model,
         'speed':1
     }
     response = requests.post(tts_server+'/inference', json=data)
@@ -226,13 +243,12 @@ async def call_voice(request):
     reader = await request.multipart()
     
     # read user_id
-    field = await reader.next()        
+    field = await reader.next()
     user_id = await field.read()
     logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice')
     # convert bytearray to text
     user_id = user_id.decode('utf-8')
-
-    config = read_config(user_id)    
+    config = read_config(user_id)
 
     # Read accepted users list from text file
     #granted_users = []
@@ -268,7 +284,8 @@ async def call_voice(request):
         # with open(file_path, 'rb') as f:
         #     r = requests.post(stt_url, files={'file': f})
         # r = requests.post(uri, files={'file': f}, data={'language_code': language_code})
-        language_code = 'en-US'
+        # language_code = 'en-US'
+        language_code, model = language_parameters(config)
         r = requests.post(stt_url, files={'file': voice}, data={'language_code': language_code})
         # r = await stt(stt_url, filename+'.ogg', 'en-US')
         user_text = r.text
@@ -288,7 +305,7 @@ async def call_voice(request):
 
         # synthesis text to speech
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.synthesis text to speech')
-        tts(bot_text, filename)
+        tts(bot_text, filename, config)
         file_should_be_removed = True
     else:
         filename = 'data/add_funds'
