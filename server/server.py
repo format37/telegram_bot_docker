@@ -392,7 +392,8 @@ def languages_list(message):
             "config": [{'last_cmd': 'choose_language'}]
         }
         request_str = json.dumps(data)
-        requests.post(url, json=request_str)
+        r = requests.post(url, json=request_str)
+        logger.info(r.text)
     except Exception as e:
         langteabot.reply_to(message, e)
 
