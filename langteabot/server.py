@@ -350,7 +350,7 @@ async def call_voice(request):
         # append datetime and prompt to logs/prompt_[iser_id].csv
         # splitter is ;
         with open('logs/prompt_'+user_id+'.csv', 'a') as f:
-            f.write(str(dt.now())+';'+chat_gpt_prompt+';'+str(total_tokens)+'\n')
+            f.write(str(dt.now())+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
 
         # remove user's voice wav file
         # os.remove(filename+'.wav')
