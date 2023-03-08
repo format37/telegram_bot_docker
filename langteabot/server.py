@@ -326,7 +326,7 @@ def main():
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/check_balance', call_check_balance)
-    app.router.add_route('GET', '/update_settings', call_update_settings)
+    app.router.add_route('POST', '/update_settings', call_update_settings)
     web.run_app(app, port=os.environ.get('PORT', ''))
 
 
