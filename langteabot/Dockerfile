@@ -9,6 +9,7 @@ RUN mkdir user_conf
 RUN mkdir data
 # COPY granted_users.txt /server
 COPY data/add_funds.wav /server/data
+COPY data/languages.json /server/data
 COPY server.py /server
 ENTRYPOINT ["python3"]
 CMD ["server.py"]
