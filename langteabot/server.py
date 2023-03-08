@@ -186,7 +186,7 @@ async def openai_conversation(config, user_id, user_text):
         with open('logs/prompt_'+user_id+'.csv', 'a') as f:
             f.write(str(dt.now())+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
 
-        return bot_text
+        return str(bot_text)
 
 
 async def call_voice(request):
