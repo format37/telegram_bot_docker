@@ -168,7 +168,7 @@ async def call_regular_message(request):
     return web.Response(text=answer, content_type="text/html")
 
 
-async def openai_conversation(config, user_id, user_text):
+def openai_conversation(config, user_id, user_text):
     # openai conversation
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.openai conversation')
         # init
