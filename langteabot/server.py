@@ -154,6 +154,10 @@ async def call_regular_message(request):
         config['chat_gpt_prompt'][0]['content'] = data['message']
         config['last_cmd'] = 'regular_message'
         answer = 'Prompt set successfull'
+    elif config['last_cmd'] == 'choose_language':
+        config['language'] = data['message']
+        config['last_cmd'] = 'regular_message'
+        answer = 'Current language: '+str(config['language'])
     else:
         config['last_cmd'] = 'regular_message'
         if int(config['total_tokens']) < 0:
