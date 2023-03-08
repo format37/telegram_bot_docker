@@ -50,9 +50,9 @@ def call_inline():
         userlist = f.read().splitlines()
     # replace new line
     userlist = [int(x) for x in userlist]
-    logger.info("userlist: {}".format(userlist))
+    
     if user_id in userlist:
-        
+        logger.info("inline query: {}".format(r_dict["query"]))
         query = r_dict["query"]
         openai.api_key = os.getenv("PHRASE_SEED")
         answer = openai.ChatCompletion.create(
@@ -66,7 +66,8 @@ def call_inline():
         result = answer['choices'][0]['message']['content']
 
     else:
-        result = "You are not allowed to access this service"
+        logger.info("User not allowed: {}".format(user_id))
+        result = "You are not allowed to access this service"        
     return jsonify({"result": result})
 
 
