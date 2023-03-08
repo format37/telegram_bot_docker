@@ -373,6 +373,15 @@ def echo_message(message):
     langteabot.reply_to(message, content.text)
 
 
+@langteabot.message_handler(commands=['last_message'])
+def last_message(message):
+    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/last_message'
+    data = {"user_id": message.from_user.id}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    langteabot.reply_to(message, content.text)
+
+
 @langteabot.message_handler(commands=['choose_language'])
 def languages_list(message):
     # Keyboard
