@@ -85,43 +85,6 @@ async def handle(request):
 
 bots = []
 
-# === @icebergservicebot ++
-icebergservicebot = default_bot_init('ICEBERGSERVICEBOT_TOKEN')
-bots.append(icebergservicebot)
-
-@icebergservicebot.message_handler(commands=['help', 'start'])
-def send_help(message):
-    # send message hello
-    icebergservicebot.reply_to(message, "Hello, I'm icebergservicebot")
-
-@icebergservicebot.message_handler(commands=['users'])
-def send_help(message):
-    group_id = '-1001616037590'
-    user_id = '10645487875'
-    # Check is user exists in group now
-    try:
-        icebergservicebot.get_chat_member(group_id, user_id)
-        icebergservicebot.reply_to(message, "User exists")
-    except:
-        icebergservicebot.reply_to(message, "User not exists")        
-
-
-# Messages in group, redirected from other groups
-@icebergservicebot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_all(message):
-    try:
-        granted_chats = ['-1001114573373']
-        if str(message.chat.id) in granted_chats:
-            if message.forward_from is not None:
-                # logger.info('forward from: '+str(message.forward_from))
-                # Information about the group
-                reply = 'This message is from user id: '+str(message.forward_from.id)
-                logger.info(reply)
-                icebergservicebot.reply_to(message, reply)
-    except Exception as e:
-        logger.error(e)
-# === @icebergservicebot --
-
 
 # === @id37bot ++
 
@@ -184,46 +147,6 @@ def query_text(inline_query):
         is_personal=True
     )
 # === @gptaidbot --
-
-
-# === home_cleaners_watcher_bot ++
-
-hcwbot = default_bot_init('HCWBOT_TOKEN')
-bots.append(hcwbot)
-
-"""@hcwbot.message_handler(commands=['help', 'start'])
-def send_help(message):
-    link = 'https://service.icecorp.ru/help.mp4'
-    hcwbot.send_video(message.chat.id, link, reply_to_message_id = str(message))
-"""
-
-
-@hcwbot.message_handler(func=lambda message: True, content_types=['text'])
-def send_user(message):
-    url = 'http://localhost:'+os.environ.get('HCWBOT_PORT')+'/message'
-    data = {
-        "message": message.text,
-        "group": message.chat.id,
-        "user": message.from_user.id
-    }
-    request_str = json.dumps(data)
-    answer = requests.post(url, json=request_str)
-    # there are two types of content_type:
-    # application/json
-    # image/png
-    # Check the content type
-    if answer.headers['Content-Type'] == 'image/png':
-        hcwbot.send_photo(message.chat.id, answer.content,
-                          reply_to_message_id=str(message))
-    else:
-        #  answer.headers['Content-Type'] == 'application/json':
-        if message.chat.id == message.from_user.id:
-            cleaning_group_id = -37549110
-            hcwbot.send_message(cleaning_group_id, answer.text)
-        else:
-            hcwbot.reply_to(message, answer.text)
-
-# === home_cleaners_watcher_bot --
 
 
 # === calcubot ++
@@ -448,6 +371,23 @@ def echo_message(message):
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     langteabot.reply_to(message, content.text)
+
+
+@langteabot.message_handler(commands=['choose_language'])
+def languages_list(message):
+    # Keyboard
+    keyboard = telebot.types.ReplyKeyboardMarkup(
+        row_width=1, resize_keyboard=True)
+    try:
+        data_path = 'data/'
+        with open(data_path+'languages.json', 'r') as f:
+            languages = json.load(f)
+        for language in languages:
+            keyboard.add(telebot.types.KeyboardButton(language))
+        langteabot.send_message(
+            message.chat.id, "Choose the voice language", reply_markup=keyboard)
+    except Exception as e:
+        langteabot.reply_to(message, e)
 
 
 @langteabot.message_handler(func=lambda message: True, content_types=['text'])

@@ -1,0 +1,6 @@
+{
+    "English": {"name": "English", "code": "en-US", "female_model": "en-US-Neural2-F", "male_model": "en-US-Neural2-J"},
+    "Ukrainian": {"name": "Ukrainian", "code": "uk-UA", "female_model": "uk-UA-Wavenet-A", "male_model": "uk-UA-Wavenet-A"},
+    "Japanese": {"name": "Japanese", "code": "ja-JP", "female_model": "ja-JP-Wavenet-B", "male_model": "ja-JP-Wavenet-D"},
+    "Russian": {"name": "Russian", "code": "ru-RU", "female_model": "ru-RU-Wavenet-C", "male_model": "ru-RU-Wavenet-B"}    
+}
