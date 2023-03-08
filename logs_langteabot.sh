@@ -1,8 +1,7 @@
-#!/bin/bash
-
-# Step 1: Get the container ID by its name and store ID to the system variable
-CONTAINER_NAME="telegram_bot_docker_langteabot_1"
-CONTAINER_ID=$(docker ps -aqf "name=$CONTAINER_NAME")
-
-# Step 2: Get logs by this ID
-docker logs $CONTAINER_ID
+# get id of running container with image name
+container_id=$(sudo docker ps | grep telegram_bot_docker_langteabot_1 | awk '{print $1}')
+echo "container id: $container_id"
+# get logs
+sudo docker logs $container_id
+# connect to container
+# sudo docker exec -it $container_id /bin/bash
