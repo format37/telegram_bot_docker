@@ -239,7 +239,7 @@ async def call_voice(request):
         # with open(file_path, 'rb') as f:
         #     r = requests.post(stt_url, files={'file': f})
         # r = requests.post(stt_url, files={'file': voice})
-        r = await stt(stt_url, voice, 'en-US')
+        r = await stt(stt_url, filename+'.ogg', 'en-US')
         user_text = r.text
 
         # remove ogg file
