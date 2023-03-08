@@ -342,6 +342,7 @@ async def call_voice(request):
             chat_gpt_prompt.append({"role": "assistant", "content": bot_text})
             config['chat_gpt_prompt'] = chat_gpt_prompt
             total_tokens = openai_response['usage']['total_tokens']
+            config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
 
         # save config
         save_config(config, user_id)
