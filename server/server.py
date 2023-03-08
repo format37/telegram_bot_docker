@@ -389,7 +389,7 @@ def languages_list(message):
         url = 'http://localhost:' + os.environ.get('LANGTEABOT_PORT') + '/update_settings'
         data = {
             "user_id": message.from_user.id,
-            "config": [{'last_cmd': 'choose_language'}]
+            "config": {'last_cmd': 'choose_language'}
         }
         request_str = json.dumps(data)
         r = requests.post(url, json=request_str)
