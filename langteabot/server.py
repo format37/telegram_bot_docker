@@ -123,6 +123,7 @@ def reset_prompt(user_id):
     # init_prompt = config['init_prompt']
     chat_gpt_init_prompt = config['chat_gpt_init_prompt']
     total_tokens = config['total_tokens']
+    language = config['language']
     # names = config['names']
     config = load_default_config(user_id)
     config['total_tokens'] = total_tokens
@@ -130,6 +131,7 @@ def reset_prompt(user_id):
     # config['init_prompt'] = init_prompt
     config['chat_gpt_prompt'] = chat_gpt_init_prompt
     config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
+    config['language'] = language
     # config['names'] = names
     config['last_cmd'] = 'reset_prompt'
     save_config(config, user_id)
@@ -155,6 +157,17 @@ async def call_set_prompt(request):
     config['last_cmd'] = 'set_prompt'
     save_config(config, user_id)
     return web.Response(text='Please, send me a new init prompt', content_type="text/html")
+
+async def call_last_message(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_last_message')
+    # read prompt from user config
+    config = read_config(user_id)
+    # Read last message from prompt
+    last_message = config['prompt'][-1]['content']    
+    return web.Response(text=last_message, content_type="text/html")
 
 
 async def call_update_settings(request):
@@ -347,6 +360,7 @@ def main():
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/check_balance', call_check_balance)
     app.router.add_route('POST', '/update_settings', call_update_settings)
+    app.router.add_route('POST', '/last_message', call_last_message)
     web.run_app(app, port=os.environ.get('PORT', ''))
 
 
