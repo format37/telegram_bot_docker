@@ -140,7 +140,7 @@ async def call_set_prompt(request):
     return web.Response(text='Please, send me a new init prompt', content_type="text/html")
 
 
-async def update_settings(request):
+async def call_update_settings(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
@@ -310,7 +310,7 @@ async def call_check_balance(request):
     balance = -total_tokens/1000*price
     # round
     balance = round(balance, 2)
-    content = '$'+str(balance)+'\nTo top up your balance, just send a message to @format37'
+    content = '$'+str(balance)+'\nTo top up your balance, send a message to @format37'
     return web.Response(text=content, content_type="text/html")
 
 
@@ -322,6 +322,7 @@ def main():
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/check_balance', call_check_balance)
+    app.router.add_route('GET', '/update_settings', call_update_settings)
     web.run_app(app, port=os.environ.get('PORT', ''))
 
 
