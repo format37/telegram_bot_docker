@@ -1,4 +1,5 @@
-FROM python:latest
+#FROM python:latest
+FROM python:3.9.16
 WORKDIR /server
 RUN bash -c 'apt-get install software-properties-common;add-apt-repository ppa:mc3man/trusty-media -y;apt-get update;apt-get install ffmpeg -y'
 COPY requirements.txt /server
@@ -8,5 +9,5 @@ RUN mkdir data
 # COPY granted_users.txt /server
 COPY data/add_funds.wav /server/data
 COPY server.py /server
-ENTRYPOINT ["python"]
+ENTRYPOINT ["python3"]
 CMD ["server.py"]
