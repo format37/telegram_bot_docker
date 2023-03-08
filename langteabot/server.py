@@ -49,9 +49,9 @@ def tts(tts_text, filename, config):
     tts_server = os.environ.get('TTS_SERVER', '')
     # https://cloud.google.com/text-to-speech/docs/voices
     # https://cloud.google.com/text-to-speech
-    logger.info('tts: '+tts_text)
     
     language_code, model = language_parameters(config)
+    logger.info('tts: '+tts_text+'\n'+language_code+' '+model)
     
     data = {
         'text':tts_text,
