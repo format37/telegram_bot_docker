@@ -152,7 +152,7 @@ async def call_update_settings(request):
         # config['prompt'] = data['prompt']
         # config['last_cmd'] = 'set_prompt'
         for key in data['config']:
-            logger.info(key+': '+str(data['config'][key]))
+            logger.info(str(key)+': '+str(data['config'][key]))
             config[key] = data['config'][key]
         save_config(config, user_id)
         return web.Response(text='Ok', content_type="text/html")
