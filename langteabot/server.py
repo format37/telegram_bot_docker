@@ -151,9 +151,12 @@ async def call_update_settings(request):
         # set new prompt
         # config['prompt'] = data['prompt']
         # config['last_cmd'] = 'set_prompt'
-        for key in data['config']:
+        """for key in data['config']:
             logger.info(str(key)+': '+str(data['config'][key]))
-            config[key] = data['config'][key]
+            config[key] = data['config'][key]"""
+        for key, value in data['config'].items():
+            logger.info(str(key)+': '+str(value))
+            config[key] = value
         save_config(config, user_id)
         return web.Response(text='Ok', content_type="text/html")
     except Exception as e:
