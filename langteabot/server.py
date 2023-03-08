@@ -88,6 +88,15 @@ def text_davinci(prompt, stop_words):
     )))
 
 
+def text_chat_gpt(prompt):
+    openai.api_key = os.getenv("PHRASE_SEED")
+    answer = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=prompt
+    )
+    return answer
+
+
 def load_default_config(user_id):
     conf_path = 'user_conf/'
     with open(conf_path+'config.json', 'r') as f:
@@ -147,12 +156,16 @@ def reset_prompt(user_id):
     # read default prompt
     config = read_config(user_id)
     init_prompt = config['init_prompt']
+    chat_gpt_prompt = config['chat_gpt_prompt']
+    chat_gpt_init_prompt = config['chat_gpt_init_prompt']
     total_tokens = config['total_tokens']
     names = config['names']
     config = load_default_config(user_id)
     config['total_tokens'] = total_tokens
     config['prompt'] = init_prompt
     config['init_prompt'] = init_prompt
+    config['chat_gpt_prompt'] = chat_gpt_prompt
+    config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
     config['names'] = names
     config['last_cmd'] = 'reset_prompt'
     save_config(config, user_id)
@@ -306,20 +319,30 @@ async def call_voice(request):
         # openai conversation
         logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.openai conversation')
         # init
-        names = config['names']        
-        prompt = config['prompt']    
-        #prompt_len = len(prompt.split('\n'))
-        prompt += '\n'+names[0]+': ' + user_text + '\n'+names[1]+': '
-        davinchi_response = text_davinci(str(prompt), names)
-        bot_text = davinchi_response['choices'][0]['text']
-        total_tokens = davinchi_response['usage']['total_tokens']
-        prompt += bot_text.replace('\n', '')
+        if (False):
+            # Davinci
+            names = config['names']        
+            prompt = config['prompt']
+            prompt += '\n'+names[0]+': ' + user_text + '\n'+names[1]+': '
+            davinchi_response = text_davinci(str(prompt), names)
+            bot_text = davinchi_response['choices'][0]['text']
+            total_tokens = davinchi_response['usage']['total_tokens']
+            prompt += bot_text.replace('\n', '')
 
-        # update total_tokens in user config
-        config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
+            # update total_tokens in user config
+            config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
 
-        # update prompt in user config
-        config['prompt'] = prompt
+            # update prompt in user config
+            config['prompt'] = prompt
+        else:
+            # GPT-3
+            chat_gpt_prompt = config['chat_gpt_prompt']
+            chat_gpt_prompt.append({"role": "user", "content": str(user_text)})
+            openai_response = text_chat_gpt(chat_gpt_prompt)
+            bot_text = openai_response['choices'][0]['message']['content']
+            chat_gpt_prompt.append({"role": "assistant", "content": bot_text})
+            config['chat_gpt_prompt'] = chat_gpt_prompt
+            total_tokens = openai_response['usage']['total_tokens']
 
         # save config
         save_config(config, user_id)
@@ -327,7 +350,7 @@ async def call_voice(request):
         # append datetime and prompt to logs/prompt_[iser_id].csv
         # splitter is ;
         with open('logs/prompt_'+user_id+'.csv', 'a') as f:
-            f.write(str(dt.now())+';'+prompt+';'+str(total_tokens)+'\n')
+            f.write(str(dt.now())+';'+chat_gpt_prompt+';'+str(total_tokens)+'\n')
 
         # remove user's voice wav file
         # os.remove(filename+'.wav')

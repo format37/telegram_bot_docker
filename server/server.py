@@ -406,7 +406,6 @@ def query_text(inline_query):
 
 
 # === langteabot ++
-
 langteabot = default_bot_init('LANGTEABOT_TOKEN')
 bots.append(langteabot)
 
@@ -552,7 +551,6 @@ def send_user(message):
         langteabot.reply_to(message, e)
 
 # receive audio from telegram
-
 
 @langteabot.message_handler(func=lambda message: True, content_types=['voice'])
 def echo_voice(message):
