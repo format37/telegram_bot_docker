@@ -429,15 +429,6 @@ def echo_message(message):
     langteabot.reply_to(message, content.text)
 
 
-@langteabot.message_handler(commands=['show_names'])
-def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_names'
-    data = {"user_id": message.from_user.id}
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    langteabot.reply_to(message, content.text)
-
-
 @langteabot.message_handler(commands=['reset'])
 def echo_message(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/reset_prompt'
@@ -445,23 +436,6 @@ def echo_message(message):
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     langteabot.reply_to(message, content.text)
-
-
-@langteabot.message_handler(commands=['prompts'])
-def prompts_list(message):
-    # Keyboard
-    keyboard = telebot.types.ReplyKeyboardMarkup(
-        row_width=1, resize_keyboard=True)
-    try:
-        data_path = 'data/'
-        with open(data_path+'prompts.json', 'r') as f:
-            prompts = json.load(f)
-        for prompt in prompts:
-            keyboard.add(telebot.types.KeyboardButton(prompt))
-        langteabot.send_message(
-            message.chat.id, "Choose your interlocutor", reply_markup=keyboard)
-    except Exception as e:
-        langteabot.reply_to(message, e)
 
 
 @langteabot.message_handler(commands=['set_prompt'])
@@ -476,82 +450,24 @@ def echo_message(message):
     langteabot.reply_to(message, content.text)
 
 
-@langteabot.message_handler(commands=['set_names'])
-def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_names'
-    data = {
-        "user_id": message.from_user.id,
-        "names": message.text[len('/set_names '):]
-    }
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    langteabot.reply_to(message, content.text)
-
-
-"""@langteabot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/regular_message'
-    data = {
-        "user_id": message.from_user.id,
-        "message": message.text
-        }
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)    
-    langteabot.reply_to(message, content.text)"""
-
-
 @langteabot.message_handler(func=lambda message: True, content_types=['text'])
 def send_user(message):
     try:
-        data_path = 'data/'
-        with open(data_path+'prompts.json', 'r') as f:
-            prompts = json.load(f)
-
-        if message.text in prompts:
-            if message.text == 'Customizable':
-                # Set prompt expectation
-                url = 'http://localhost:' + \
-                    os.environ.get('LANGTEABOT_PORT')+'/set_prompt'
-                data = {
-                    "user_id": message.from_user.id,
-                    "prompt": message.text[len('/set_prompt '):]
-                }
-                request_str = json.dumps(data)
-                content = requests.post(url, json=request_str)
-                # Send message and close the buttons
-                langteabot.send_message(
-                    message.chat.id, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
-            else:
-                # Set selected prompt
-                url = 'http://localhost:' + \
-                    os.environ.get('LANGTEABOT_PORT')+'/set_prompt_selection'
-                data = {
-                    "user_id": message.from_user.id,
-                    "prompt": prompts[message.text]
-                }
-                request_str = json.dumps(data)
-                content = requests.post(url, json=request_str)
-                # Send message and close the buttons
-                langteabot.send_message(
-                    message.chat.id, content.text, reply_markup=telebot.types.ReplyKeyboardRemove())
-                # Send message and close the buttons
-                # langteabot.send_message(message.chat.id, prompts[message.text], reply_markup=telebot.types.ReplyKeyboardRemove())
-        else:
-            # Receive user's prompt
-            url = 'http://localhost:' + \
-                os.environ.get('LANGTEABOT_PORT')+'/regular_message'
-            data = {
-                "user_id": message.from_user.id,
-                "message": message.text
-            }
-            request_str = json.dumps(data)
-            content = requests.post(url, json=request_str)
-            langteabot.reply_to(message, content.text)
+        # Receive user's prompt
+        url = 'http://localhost:' + \
+            os.environ.get('LANGTEABOT_PORT')+'/regular_message'
+        data = {
+            "user_id": message.from_user.id,
+            "message": message.text
+        }
+        request_str = json.dumps(data)
+        content = requests.post(url, json=request_str)
+        langteabot.reply_to(message, content.text)
     except Exception as e:
         langteabot.reply_to(message, e)
 
-# receive audio from telegram
 
+# receive audio from telegram
 @langteabot.message_handler(func=lambda message: True, content_types=['voice'])
 def echo_voice(message):
 
@@ -568,7 +484,6 @@ def echo_voice(message):
     # web.FileResponse(filename+'.wav')
     # return as audio message
     langteabot.send_voice(message.chat.id, r.content)
-
 # === langteabot --
 
 

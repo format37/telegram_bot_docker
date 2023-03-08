@@ -29,36 +29,10 @@ async def stt(uri, file_name):
         r = requests.post(uri, files={'file': f})
     logger.info('stt: '+r.text)
     return r.text
-    """async with websockets.connect(uri) as websocket:
-
-        phrases = []
-
-        wf = wave.open(file_name, "rb")
-        await websocket.send(
-            '{ "config" : { "sample_rate" : %d } }' % (wf.getframerate())
-            )
-        buffer_size = int(wf.getframerate() * 0.2)  # 0.2 seconds of audio
-        while True:
-            data = wf.readframes(buffer_size)
-
-            if len(data) == 0:
-                break
-
-            await websocket.send(data)
-            accept = json.loads(await websocket.recv())
-            accept_feature_extractor(phrases, accept)
-
-        await websocket.send('{"eof" : 1}')
-        accept = json.loads(await websocket.recv())
-        accept_feature_extractor(phrases, accept)
-
-        return ' '.join(phrases)"""
 
 
 def tts(tts_text, filename):
     tts_server = os.environ.get('TTS_SERVER', '')
-    # data={'text': tts_text}
-    # request_str = json.dumps(data)
     # https://cloud.google.com/text-to-speech/docs/voices
     # https://cloud.google.com/text-to-speech
     logger.info('tts: '+tts_text)
@@ -72,20 +46,6 @@ def tts(tts_text, filename):
     # Save response as audio file
     with open(filename+".wav", "wb") as f:
         f.write(response.content)
-
-
-def text_davinci(prompt, stop_words):
-    openai.api_key = os.getenv("PHRASE_SEED")
-    return json.loads(str(openai.Completion.create(
-      engine="text-davinci-003",
-      prompt=prompt,
-      temperature=0.9,
-      max_tokens=150,
-      top_p=1,
-      frequency_penalty=0,
-      presence_penalty=0.6,
-      stop=stop_words
-    )))
 
 
 def text_chat_gpt(prompt):
@@ -125,7 +85,7 @@ def save_config(config, user_id):
         json.dump(config, f)
 
 
-async def call_show_prompt(request):    
+async def call_show_prompt(request):
     request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)
     user_id = str(data['user_id'])
@@ -134,20 +94,8 @@ async def call_show_prompt(request):
     config = read_config(user_id)
     config['last_cmd'] = 'show_prompt'
     save_config(config, user_id)
-    content = str(config['prompt'])
-    return web.Response(text=content, content_type="text/html")
-
-
-async def call_show_names(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_show_names')
-    # read prompt from user config
-    config = read_config(user_id)
-    config['last_cmd'] = 'show_names'
-    save_config(config, user_id)
-    content = str(config['names'])
+    # content = str(config['prompt'])
+    content = str(config['chat_gpt_prompt'][-1]['content'])
     return web.Response(text=content, content_type="text/html")
 
 
@@ -155,17 +103,17 @@ def reset_prompt(user_id):
     logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
     # read default prompt
     config = read_config(user_id)
-    init_prompt = config['init_prompt']
+    # init_prompt = config['init_prompt']
     chat_gpt_init_prompt = config['chat_gpt_init_prompt']
     total_tokens = config['total_tokens']
-    names = config['names']
+    # names = config['names']
     config = load_default_config(user_id)
     config['total_tokens'] = total_tokens
-    config['prompt'] = init_prompt
-    config['init_prompt'] = init_prompt
+    # config['prompt'] = init_prompt
+    # config['init_prompt'] = init_prompt
     config['chat_gpt_prompt'] = chat_gpt_init_prompt
     config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
-    config['names'] = names
+    # config['names'] = names
     config['last_cmd'] = 'reset_prompt'
     save_config(config, user_id)
 
@@ -188,21 +136,8 @@ async def call_set_prompt(request):
     # set new prompt
     # config['prompt'] = data['prompt']
     config['last_cmd'] = 'set_prompt'
-    save_config(config, user_id)    
-    return web.Response(text='Please, send a new prompt', content_type="text/html")
-
-
-async def call_set_names(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_names')
-    # read prompt from user config
-    config = read_config(user_id)
-    # set new names
-    config['last_cmd'] = 'set_names'
     save_config(config, user_id)
-    return web.Response(text='Please, tell me Your name', content_type="text/html")
+    return web.Response(text='Please, send me a new init prompt', content_type="text/html")
 
 
 async def call_regular_message(request):
@@ -216,46 +151,42 @@ async def call_regular_message(request):
     answer = 'Regular messsage received'
 
     if config['last_cmd'] == 'set_prompt':
-        config['prompt'] = data['message']
-        config['init_prompt'] = data['message']
+        config['chat_gpt_prompt'][0]['content'] = data['message']
         config['last_cmd'] = 'regular_message'
-        answer = 'Prompt set successfull'        
-
-    elif config['last_cmd'] == 'set_names':
-        # save a new stop word to 0th place of config['names']
-        # config['names'].insert(0, data['message'])
-        config['names'][0] = data['message']
-        config['last_cmd'] = 'names_0'
-        answer = 'Your name set successfull. Please, send the name of Bot'        
-
-    elif config['last_cmd'] == 'names_0':
-        config['names'][1] = data['message']
-        config['last_cmd'] = 'names_1'
-        answer = "Bot's name set successfull."
-
+        answer = 'Prompt set successfull'
     else:
         config['last_cmd'] = 'regular_message'
+        if int(config['total_tokens']) < 0:
+            answer = openai_conversation(config, user_id, data['message'])
+        else:
+            answer = 'Not enough funds. Please, refill your account'
     
     save_config(config, user_id)
     return web.Response(text=answer, content_type="text/html")
 
 
-async def call_set_prompt_selection(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_prompt_selection')
-    # read prompt from user config
-    config = read_config(user_id)
-    new_prompt = data['prompt'].replace('Alex', config['names'][0])
-    new_prompt = new_prompt.replace('Jane', config['names'][1])
-    config['prompt'] = new_prompt
-    config['init_prompt'] = new_prompt
-    config['last_cmd'] = 'regular_message'
-    answer = new_prompt
-    
-    save_config(config, user_id)
-    return web.Response(text=answer, content_type="text/html")
+async def openai_conversation(config, user_id, user_text):
+    # openai conversation
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.openai conversation')
+        # init
+        chat_gpt_prompt = config['chat_gpt_prompt']
+        chat_gpt_prompt.append({"role": "user", "content": str(user_text)})
+        openai_response = text_chat_gpt(chat_gpt_prompt)
+        bot_text = openai_response['choices'][0]['message']['content']
+        chat_gpt_prompt.append({"role": "assistant", "content": bot_text})
+        config['chat_gpt_prompt'] = chat_gpt_prompt
+        total_tokens = openai_response['usage']['total_tokens']
+        config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
+
+        # save config
+        save_config(config, user_id)
+
+        # append datetime and prompt to logs/prompt_[iser_id].csv
+        # splitter is ;
+        with open('logs/prompt_'+user_id+'.csv', 'a') as f:
+            f.write(str(dt.now())+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
+
+        return bot_text
 
 
 async def call_voice(request):
@@ -315,42 +246,7 @@ async def call_voice(request):
         #    #config = load_default_config(user_id)
         #    reset_prompt(user_id)
 
-        # openai conversation
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.openai conversation')
-        # init
-        if (False):
-            # Davinci
-            names = config['names']        
-            prompt = config['prompt']
-            prompt += '\n'+names[0]+': ' + user_text + '\n'+names[1]+': '
-            davinchi_response = text_davinci(str(prompt), names)
-            bot_text = davinchi_response['choices'][0]['text']
-            total_tokens = davinchi_response['usage']['total_tokens']
-            prompt += bot_text.replace('\n', '')
-
-            # update total_tokens in user config
-            config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
-
-            # update prompt in user config
-            config['prompt'] = prompt
-        else:
-            # GPT-3
-            chat_gpt_prompt = config['chat_gpt_prompt']
-            chat_gpt_prompt.append({"role": "user", "content": str(user_text)})
-            openai_response = text_chat_gpt(chat_gpt_prompt)
-            bot_text = openai_response['choices'][0]['message']['content']
-            chat_gpt_prompt.append({"role": "assistant", "content": bot_text})
-            config['chat_gpt_prompt'] = chat_gpt_prompt
-            total_tokens = openai_response['usage']['total_tokens']
-            config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
-
-        # save config
-        save_config(config, user_id)
-
-        # append datetime and prompt to logs/prompt_[iser_id].csv
-        # splitter is ;
-        with open('logs/prompt_'+user_id+'.csv', 'a') as f:
-            f.write(str(dt.now())+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
+        bot_text = openai_conversation(config, user_id, user_text)
 
         # remove user's voice wav file
         # os.remove(filename+'.wav')
@@ -394,11 +290,8 @@ def main():
     app = web.Application(client_max_size=1024**3)    
     app.router.add_route('POST', '/voice', call_voice)
     app.router.add_route('POST', '/show_prompt', call_show_prompt)
-    app.router.add_route('POST', '/show_names', call_show_names)
     app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
     app.router.add_route('POST', '/set_prompt', call_set_prompt)
-    app.router.add_route('POST', '/set_prompt_selection', call_set_prompt_selection)
-    app.router.add_route('POST', '/set_names', call_set_names)
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/check_balance', call_check_balance)
     web.run_app(app, port=os.environ.get('PORT', ''))
