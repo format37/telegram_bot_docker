@@ -24,9 +24,9 @@ def accept_feature_extractor(phrases, accept):
         phrases.append(accept_text)
 
 
-async def stt(uri, file_name):
+async def stt(uri, file_name, language_code):
     with open(file_name, 'rb') as f:
-        r = requests.post(uri, files={'file': f})
+        r = requests.post(uri, files={'file': f}, data={'language_code': language_code})
     logger.info('stt: '+r.text)
     return r.text
 
@@ -238,7 +238,8 @@ async def call_voice(request):
         # user_text = await stt(stt_uri+'/inference', filename+'.wav')
         # with open(file_path, 'rb') as f:
         #     r = requests.post(stt_url, files={'file': f})
-        r = requests.post(stt_url, files={'file': voice})
+        # r = requests.post(stt_url, files={'file': voice})
+        r = await stt(stt_url, voice, 'en-US')
         user_text = r.text
 
         # remove ogg file
