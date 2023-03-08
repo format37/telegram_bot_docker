@@ -238,8 +238,10 @@ async def call_voice(request):
         # user_text = await stt(stt_uri+'/inference', filename+'.wav')
         # with open(file_path, 'rb') as f:
         #     r = requests.post(stt_url, files={'file': f})
-        # r = requests.post(stt_url, files={'file': voice})
-        r = await stt(stt_url, filename+'.ogg', 'en-US')
+        # r = requests.post(uri, files={'file': f}, data={'language_code': language_code})
+        language_code = 'en-US'
+        r = requests.post(stt_url, files={'file': voice}, data={'language_code': language_code})
+        # r = await stt(stt_url, filename+'.ogg', 'en-US')
         user_text = r.text
 
         # remove ogg file
