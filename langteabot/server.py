@@ -162,6 +162,9 @@ async def call_regular_message(request):
             answer = 'Not enough funds. Please, refill your account'
     
     save_config(config, user_id)
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer: '+str(answer))
+    # dtype
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer type: '+str(type(answer)))
     return web.Response(text=answer, content_type="text/html")
 
 
