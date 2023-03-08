@@ -166,7 +166,7 @@ async def call_last_message(request):
     # read prompt from user config
     config = read_config(user_id)
     # Read last message from prompt
-    last_message = config['prompt'][-1]['content']    
+    last_message = config['chat_gpt_prompt'][-1]['content']    
     return web.Response(text=last_message, content_type="text/html")
 
 
