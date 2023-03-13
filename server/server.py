@@ -442,6 +442,43 @@ def echo_voice(message):
     # web.FileResponse(filename+'.wav')
     # return as audio message
     langteabot.send_voice(message.chat.id, r.content)
+dp.callback_query_handler(lambda c: c.data == "pay")
+async def process_callback_pay(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_invoice(callback_query.from_user.id,
+                           title=PAYMENT_DESCRIPTION,
+                           description=PAYMENT_DESCRIPTION,
+                           provider_token=os.environ["STRIPE_PROVIDER_TOKEN"],
+                           currency=CURRENCY,
+                           prices=[types.LabeledPrice(label=PAYMENT_DESCRIPTION, amount=PAYMENT_PRICE)],
+                           start_parameter="pay",
+                           payload="Payment for services",
+                           need_name=True,
+                           need_phone_number=True,
+                           need_email=True,
+                           is_flexible=True)
+
+@dp.pre_checkout_query_handler(lambda query: True)
+async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery):
+    # Check that the price is correct
+    if pre_checkout_query.total_amount != PAYMENT_PRICE:
+        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=False,
+                                             error_message="Price did not match. Please try again.")
+    else:
+        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+
+@dp.message_handler(content_types=types.ContentType.SUCCESSFUL_PAYMENT)
+async def process_successful_payment(message: types.Message):
+    # Transfer funds to card using Stripe API
+    payment = message.successful_payment
+    charge = stripe.Charge.create(
+        amount=payment.total_amount,
+        currency=payment.currency,
+        source=payment.provider_payment_charge_id,
+        description=PAYMENT_DESCRIPTION
+    )
+    # Respond to user with success message
+    await message.answer("Thank you for your payment!")
 # === langteabot --
 
 
