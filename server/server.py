@@ -173,10 +173,11 @@ calcubot = default_bot_init('CALCUBOT_TOKEN')
 bots.append(calcubot)
 
 
-def read_blocked_csv(filename='blocked.csv'):
+def read_blocked_csv(filename='calcubot_blocked/blocked.csv'):
     blocked_numbers = []
     if not os.path.exists(filename):
-        logging.info(f"{filename} does not exist.")        
+        # logger.info(f"{filename} does not exist.")
+        pass
     else:
         with open(filename, 'r') as file:
             reader = csv.reader(file)
@@ -186,11 +187,11 @@ def read_blocked_csv(filename='blocked.csv'):
     return blocked_numbers
 
 
-def add_to_blocked_csv(number, filename='blocked.csv'):
+def add_to_blocked_csv(number, filename='calcubot_blocked/blocked.csv'):
     logger.info('add_to_blocked_csv')
     blocked_numbers = read_blocked_csv(filename)
     if number in blocked_numbers:
-        logging.info(f"{number} is already in {filename}.")
+        logger.info(f"{number} is already in {filename}.")
         return
     
     with open(filename, 'a', newline='') as file:
@@ -200,7 +201,6 @@ def add_to_blocked_csv(number, filename='blocked.csv'):
     logger.info(f"Added {number} to blocked.csv")
 
 def calcubot_sequrity(request, user_id):
-    # try:
     # Convert 'Message' object to a string
     request_text = request.text
 
@@ -210,24 +210,17 @@ def calcubot_sequrity(request, user_id):
             add_to_blocked_csv(user_id)
             return False
     return True
-    """except Exception as e:
-        logger.error(e)
-        return True"""
 
 
-def granted_user(user_id):
-    # try:        
+def granted_user(user_id):    
     calcubot_blocked_users = read_blocked_csv()
     user_id = int(user_id)
     if user_id in calcubot_blocked_users:
         logger.info('Blocked user: {}'.format(user_id))
         return False
     else:
-        logger.info('Granted user: {}'.format(user_id))
+        # logger.info('Granted user: {}'.format(user_id))
         return True
-    # except Exception as e:
-    #     logger.error(e)
-    #     return False
 
 
 def collect_logs():
@@ -306,7 +299,7 @@ def send_user(message):
             reaction = calcubot_sequrity(message, message.from_user.id)
             if not reaction:
                 calcubot.reply_to(message, 'You are blocked')
-            logger.info('Security pass. Reaction: {}'.format(reaction))
+            # logger.info('Security pass. Reaction: {}'.format(reaction))
 
         if reaction:
             try:
@@ -330,7 +323,8 @@ def send_user(message):
 
 @calcubot.inline_handler(func=lambda chosen_inline_result: True)
 def query_text(inline_query):
-    if granted_user(inline_query.from_user.id):
+    if granted_user(inline_query.from_user.id) and calcubot_sequrity(inline_query.query, inline_query.from_user.id):
+
         message_text_prepared = inline_query.query.strip()
         if message_text_prepared != '':
             url = 'http://localhost:' + \
