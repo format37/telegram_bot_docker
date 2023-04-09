@@ -299,6 +299,7 @@ def send_user(message):
             reaction = calcubot_sequrity(message, message.from_user.id)
             if not reaction:
                 calcubot.reply_to(message, 'You are blocked')
+            logger.info('Security pass. Reaction: {}'.format(reaction))
 
         if reaction:
             try:
