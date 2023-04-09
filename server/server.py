@@ -209,17 +209,18 @@ def calcubot_sequrity(request, user_id):
 
 
 def granted_user(user_id):
-    try:
-        user_id = int(user_id)
-        calcubot_blocked_users = read_blocked_csv()
-        if user_id in calcubot_blocked_users:
-            logger.info('Blocked user: {}'.format(user_id))
-            return False
-        else:
-            return True
-    except Exception as e:
-        logger.error(e)
+    # try:        
+    calcubot_blocked_users = read_blocked_csv()
+    user_id = int(user_id)
+    if user_id in calcubot_blocked_users:
+        logger.info('Blocked user: {}'.format(user_id))
         return False
+    else:
+        logger.info('Granted user: {}'.format(user_id))
+        return True
+    # except Exception as e:
+    #     logger.error(e)
+    #     return False
 
 
 def collect_logs():
