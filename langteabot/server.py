@@ -69,6 +69,7 @@ def text_chat_gpt(prompt):
     openai.api_key = os.getenv("PHRASE_SEED")
     answer = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
+        # model = 'gpt-4-32k-0314',
         messages=prompt
     )
     return answer

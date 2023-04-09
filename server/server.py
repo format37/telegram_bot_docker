@@ -12,6 +12,7 @@ import pandas as pd
 from datetime import datetime as dt
 import re
 import pickle
+import csv
 
 # init logging
 logging.basicConfig(level=logging.INFO)
@@ -33,7 +34,7 @@ WEBHOOK_SSL_PRIV = 'webhook_pkey.pem'
 # When asked for "Common Name (e.g. server FQDN or YOUR name)" you should reply
 # with the same value in you put in WEBHOOK_HOST
 
-logger.info('reading calcubot blocked users')
+"""logger.info('reading calcubot blocked users')
 df = pd.read_csv('calcubot_blocked/users.csv')
 df = pd.DataFrame(df.user)
 df['user'] = df.user.astype(int)
@@ -41,7 +42,24 @@ df = df.sort_values(by=['user'])
 calcubot_blocked_users = set(df['user'])
 logger.info('Loaded '+str(len(calcubot_blocked_users)) +
             ' calcubot blocked users')
-
+"""
+calcubot_unsecure_words = [
+        'exec',
+        'import',
+        'sys',
+        'subprocess',
+        'eval',
+        'open',
+        'file',
+        'write',
+        'read',
+        'print',
+        'compile'
+        'globals',
+        'locals',
+        'builtins',
+        'getattr'
+    ]
 
 async def call_test(request):
     logging.info('call_test')
@@ -155,9 +173,45 @@ calcubot = default_bot_init('CALCUBOT_TOKEN')
 bots.append(calcubot)
 
 
+def read_blocked_csv(filename='blocked.csv'):
+    if not os.path.exists(filename):
+        logging.info(f"{filename} does not exist.")
+        return []
+
+    blocked_numbers = []
+    with open(filename, 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            blocked_numbers.append(int(row[0]))
+
+    return blocked_numbers
+
+
+def add_to_blocked_csv(number, filename='blocked.csv'):
+    blocked_numbers = read_blocked_csv(filename)
+    if number in blocked_numbers:
+        logging.info(f"{number} is already in {filename}.")
+        return
+    
+    with open(filename, 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([number])
+    
+    logging.info(f"Added {number} to blocked.csv")
+
+def calcubot_sequrity(request, user_id):
+    # Check is request sequre:
+    for word in calcubot_unsecure_words:
+        if word in request:
+            add_to_blocked_csv(user_id)
+            return False
+    return True
+
+
 def granted_user(user_id):
     try:
         user_id = int(user_id)
+        calcubot_blocked_users = read_blocked_csv()
         if user_id in calcubot_blocked_users:
             logger.info('Blocked user: {}'.format(user_id))
             return False
@@ -177,7 +231,6 @@ def collect_logs():
         # create a list of dataframes
         dfs = []
         for file in files:
-            # if file=='5246634085.csv':
             with open(path + '/' + file, 'r') as f:
                 # read file to a list of strings
                 lines = f.readlines()
@@ -240,6 +293,11 @@ def send_user(message):
             else:
                 calcubot.send_document(message.chat.id, open(file, 'rb'))
                 reaction = False
+
+        if reaction:
+            reaction = calcubot_sequrity(message, message.from_user.id)
+            if not reaction:
+                calcubot.reply_to(message, 'You are blocked')
 
         if reaction:
             try:
