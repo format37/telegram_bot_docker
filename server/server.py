@@ -174,20 +174,20 @@ bots.append(calcubot)
 
 
 def read_blocked_csv(filename='blocked.csv'):
-    if not os.path.exists(filename):
-        logging.info(f"{filename} does not exist.")
-        return []
-
     blocked_numbers = []
-    with open(filename, 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            blocked_numbers.append(int(row[0]))
+    if not os.path.exists(filename):
+        logging.info(f"{filename} does not exist.")        
+    else:
+        with open(filename, 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                blocked_numbers.append(int(row[0]))
 
     return blocked_numbers
 
 
 def add_to_blocked_csv(number, filename='blocked.csv'):
+    logger.info('add_to_blocked_csv')
     blocked_numbers = read_blocked_csv(filename)
     if number in blocked_numbers:
         logging.info(f"{number} is already in {filename}.")
@@ -197,7 +197,7 @@ def add_to_blocked_csv(number, filename='blocked.csv'):
         writer = csv.writer(file)
         writer.writerow([number])
     
-    logging.info(f"Added {number} to blocked.csv")
+    logger.info(f"Added {number} to blocked.csv")
 
 def calcubot_sequrity(request, user_id):
     # Check is request sequre:
