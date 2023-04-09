@@ -200,12 +200,16 @@ def add_to_blocked_csv(number, filename='blocked.csv'):
     logger.info(f"Added {number} to blocked.csv")
 
 def calcubot_sequrity(request, user_id):
-    # Check is request sequre:
-    for word in calcubot_unsecure_words:
-        if word in request:
-            add_to_blocked_csv(user_id)
-            return False
-    return True
+    try:
+        # Check is request sequre:
+        for word in calcubot_unsecure_words:
+            if word in request:
+                add_to_blocked_csv(user_id)
+                return False
+        return True
+    except Exception as e:
+        logger.error(e)
+        return True
 
 
 def granted_user(user_id):
