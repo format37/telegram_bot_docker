@@ -297,15 +297,15 @@ def send_user(message):
             if not reaction:
                 calcubot.reply_to(message, 'You are blocked')
 
-        try:
-            # append datetime and expression to calcubot_logs/[user_id].csv
-            # splitter is ;
-            with open('calcubot_logs/'+str(message.from_user.id)+'.csv', 'a') as f:
-                f.write(str(dt.now())+';'+str(message.text)+'\n')
-        except Exception as e:
-            logger.error(e)
-
         if reaction:
+            try:
+                # append datetime and expression to calcubot_logs/[user_id].csv
+                # splitter is ;
+                with open('calcubot_logs/'+str(message.from_user.id)+'.csv', 'a') as f:
+                    f.write(str(dt.now())+';'+str(message.text)+'\n')
+            except Exception as e:
+                logger.error(e)
+                
             data = {
                 "message": message.text,
                 "user_id": message.from_user.id,
