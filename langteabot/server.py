@@ -352,6 +352,17 @@ async def call_check_balance(request):
     return web.Response(text=content, content_type="text/html")
 
 
+async def call_inline(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_inline')
+    # read user config
+    config = read_config(user_id)
+    content = config['chat_gpt_prompt'][-1]['content']
+    return web.Response(text=content, content_type="text/html")
+
+
 def main():
     app = web.Application(client_max_size=1024**3)    
     app.router.add_route('POST', '/voice', call_voice)
@@ -362,6 +373,7 @@ def main():
     app.router.add_route('POST', '/check_balance', call_check_balance)
     app.router.add_route('POST', '/update_settings', call_update_settings)
     app.router.add_route('POST', '/last_message', call_last_message)
+    app.router.add_route('POST', '/inline', call_inline)
     web.run_app(app, port=os.environ.get('PORT', ''))
 
 

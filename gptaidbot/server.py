@@ -63,9 +63,9 @@ def call_inline():
     if os.path.exists(user_file):
         with open(user_file, "r") as f:
             last_request_time = datetime.datetime.strptime(f.read(), "%Y-%m-%d %H:%M:%S.%f")
-        if (datetime.datetime.now() - last_request_time).seconds < 30:
+        if (datetime.datetime.now() - last_request_time).seconds < 20:
             elapsed_time = (datetime.datetime.now() - last_request_time).seconds
-            return jsonify({"result": f"You must wait {30 - elapsed_time} seconds before the next request"})
+            return jsonify({"result": f"You must wait {20 - elapsed_time} seconds before the next request"})
 
     # if user_id in userlist:
     logger.info("inline query: {}".format(r_dict["query"]))

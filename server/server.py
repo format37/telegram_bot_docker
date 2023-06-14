@@ -502,6 +502,33 @@ def echo_voice(message):
     # web.FileResponse(filename+'.wav')
     # return as audio message
     langteabot.send_voice(message.chat.id, r.content)
+
+@langteabot.inline_handler(func=lambda chosen_inline_result: True)
+def query_text(inline_query):
+    # logger.info("@langteabot inline query: {}".format(inline_query.query))
+    url = 'http://localhost:' + \
+        os.environ.get('LANGTEABOT_PORT')+'/inline'
+    data = {
+        "user_id": inline_query.from_user.id,
+        "query": inline_query.query
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    
+    # answer 0
+    r0 = telebot.types.InlineQueryResultArticle(
+        '0',
+        content.json()['result'],
+        telebot.types.InputTextMessageContent(content.json()['result']),
+    )
+    answer = [r0]
+
+    langteabot.answer_inline_query(
+        inline_query.id,
+        answer,
+        cache_time=0,
+        is_personal=True
+    )
 # === langteabot --
 
 
