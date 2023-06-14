@@ -73,7 +73,7 @@ def call_inline():
     openai.api_key = os.getenv("PHRASE_SEED")
     answer = openai.ChatCompletion.create(
     # model="gpt-3.5-turbo",
-    model = 'gpt-3.5-turbo-16k'
+    model = 'gpt-3.5-turbo-16k',
     messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": str(query)}
