@@ -514,14 +514,16 @@ def query_text(inline_query):
         }
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    
+
+    """
     # answer 0
     r0 = telebot.types.InlineQueryResultArticle(
         '0',
         content.json()['result'],
         telebot.types.InputTextMessageContent(content.json()['result']),
     )
-    answer = [r0]
+    answer = [r0]"""    
+    answer = [content]
 
     langteabot.answer_inline_query(
         inline_query.id,

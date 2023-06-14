@@ -360,6 +360,7 @@ async def call_inline(request):
     # read user config
     config = read_config(user_id)
     content = config['chat_gpt_prompt'][-1]['content']
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_inline.response '+content)
     return web.Response(text=content, content_type="text/html")
 
 
