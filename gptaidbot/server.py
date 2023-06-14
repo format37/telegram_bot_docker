@@ -74,7 +74,7 @@ def call_inline():
     answer = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     # model='gpt-3.5-turbo-16k',
-    max_tokens=1000,
+    max_tokens=500,
     messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": str(query)}
