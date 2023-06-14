@@ -523,7 +523,7 @@ def query_text(inline_query):
         telebot.types.InputTextMessageContent(content.json()['result']),
     )
     answer = [r0]"""    
-    answer = [content]
+    answer = [content.text]
 
     langteabot.answer_inline_query(
         inline_query.id,
