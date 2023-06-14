@@ -141,6 +141,7 @@ def send_start(message):
 
 @gptaidbot.inline_handler(func=lambda chosen_inline_result: True)
 def query_text(inline_query):
+    logger.info("@gptaidbot inline query: {}".format(inline_query.query))
     url = 'http://localhost:' + \
         os.environ.get('GPTAIDBOT_PORT')+'/inline'
     data = {
