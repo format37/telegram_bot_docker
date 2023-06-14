@@ -78,7 +78,7 @@ def call_inline():
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": str(query)}
         ],
-        max_tokens=2000
+        max_tokens=1000
     )
     logger.info("answer: {}".format(answer))
     result = answer['choices'][0]['message']['content']
