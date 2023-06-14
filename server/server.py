@@ -164,6 +164,7 @@ def query_text(inline_query):
         cache_time=0,
         is_personal=True
     )
+    # logger.info('@gptaidbot answer_inline_query: '+str(answer))
 # === @gptaidbot --
 
 

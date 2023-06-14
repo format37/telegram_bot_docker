@@ -72,13 +72,13 @@ def call_inline():
     query = r_dict["query"]
     openai.api_key = os.getenv("PHRASE_SEED")
     answer = openai.ChatCompletion.create(
-    # model="gpt-3.5-turbo",
-    model = 'gpt-3.5-turbo-16k',
+    model="gpt-3.5-turbo",
+    # model='gpt-3.5-turbo-16k',
+    max_tokens=1000,
     messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": str(query)}
-        ],
-        max_tokens=1000
+    ]    
     )
     logger.info("answer: {}".format(answer))
     result = answer['choices'][0]['message']['content']
