@@ -6,6 +6,7 @@ import json
 import openai
 import datetime
 import json
+import glob
 
 
 logging.basicConfig(level=logging.INFO)
@@ -66,6 +67,27 @@ def save_message(user_id, user_name, chat_id, chat_type, message):
         with open(os.path.join(user_path, file_name), "w") as f:
             json.dump(data, f)
 
+def read_latest_message(user_id, chat_id, chat_type)
+    if chat_type == 'group' or chat_type == 'supergroup':
+        logger.info("read group chat")
+        # Create group id folder in the data path if not exist
+        group_path = os.path.join("data", "groups", str(chat_id))
+        # Get the latest file in folder
+        list_of_files = glob.glob(group_path + "/*.json")
+        latest_file = max(list_of_files, key=os.path.getctime)
+        with open(latest_file, "r") as f:
+            data = json.load(f)
+        return data["message"]
+    else:
+        logger.info("read private chat")
+        # Create user id folder in the data path if not exist
+        user_path = os.path.join("data", "users", str(user_id))
+        # Get the latest file in folder
+        list_of_files = glob.glob(user_path + "/*.json")
+        latest_file = max(list_of_files, key=os.path.getctime)
+        with open(latest_file, "r") as f:
+            data = json.load(f)
+        return data["message"]
 
 
 @app.route("/message", methods=["POST"])
@@ -82,7 +104,7 @@ def call_message():
     # Save the message
     save_message(user_id, user_name, chat_id, chat_type, message)
     # Define the default answer
-    result = ""
+    result = read_latest_message(user_id, chat_id, chat_type)
 
     return jsonify({"result": result})
 
