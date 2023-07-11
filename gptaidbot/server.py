@@ -70,7 +70,7 @@ def call_message():
     user_name = r_dict["user_name"]
     chat_id = r_dict["chat_id"]
     chat_type = r_dict["chat_type"]
-    message = r_dict["message"]
+    message = r_dict["text"]
     # Save the message
     save_message(user_id, user_name, chat_id, chat_type, message)
     # Define the default answer
