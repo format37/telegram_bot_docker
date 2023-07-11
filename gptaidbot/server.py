@@ -5,6 +5,8 @@ import logging
 import json
 import openai
 import datetime
+import json
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -39,25 +41,30 @@ def call_start():
 
 
 def save_message(user_id, user_name, chat_id, chat_type, message):
-    date_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+    date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H_%M_%S_%f")
+    data = {
+        "user_id": user_id,
+        "user_name": user_name,
+        "message": message,
+    }
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("group chat")
         # Create group id folder in the data path if not exist
         group_path = os.path.join("data", "groups", str(chat_id))
         os.makedirs(group_path, exist_ok=True)
-        # Each message saved as a new file with date and user name in a filename
-        file_name = f"{date_time}_{user_name}.txt"
+        # Each message saved as a new file with date in a filename
+        file_name = f"{date_time}.json"
         with open(os.path.join(group_path, file_name), "w") as f:
-            f.write(message)
+            json.dump(data, f)
     else:
         logger.info("private chat")
         # Create user id folder in the data path if not exist
         user_path = os.path.join("data", "users", str(user_id))
         os.makedirs(user_path, exist_ok=True)
-        # Each message saved as a new file with date and user name in a filename
-        file_name = f"{date_time}_{user_name}.txt"
+        # Each message saved as a new file with date in a filename
+        file_name = f"{date_time}.json"
         with open(os.path.join(user_path, file_name), "w") as f:
-            f.write(message)
+            json.dump(data, f)
 
 
 
