@@ -43,23 +43,22 @@ def save_message(user_id, user_name, chat_id, chat_type, message):
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("group chat")
         # Create group id folder in the data path if not exist
-        group_path = f"data/groups/{chat_id}"
-        if not os.path.exists(group_path):
-            os.makedirs(group_path)
+        group_path = os.path.join("data", "groups", str(chat_id))
+        os.makedirs(group_path, exist_ok=True)
         # Each message saved as a new file with date and user name in a filename
-        file_name = f"{group_path}/{date_time}_{user_name}.txt"
-        with open(file_name, "w") as f:
+        file_name = f"{date_time}_{user_name}.txt"
+        with open(os.path.join(group_path, file_name), "w") as f:
             f.write(message)
     else:
         logger.info("private chat")
         # Create user id folder in the data path if not exist
-        user_path = f"data/users/{user_id}"
-        if not os.path.exists(user_path):
-            os.makedirs(user_path)
+        user_path = os.path.join("data", "users", str(user_id))
+        os.makedirs(user_path, exist_ok=True)
         # Each message saved as a new file with date and user name in a filename
-        file_name = f"{user_path}/{date_time}_{user_name}.txt"
-        with open(file_name, "w") as f:
+        file_name = f"{date_time}_{user_name}.txt"
+        with open(os.path.join(user_path, file_name), "w") as f:
             f.write(message)
+
 
 
 @app.route("/message", methods=["POST"])
