@@ -111,13 +111,13 @@ bots.append(id37bot)
 
 
 @id37bot.message_handler(commands=['user'])
-def send_help(message):
+def id37bot_send_user(message):
     message.from_user.id
     id37bot.reply_to(message, message.from_user.id)
 
 
 @id37bot.message_handler(commands=['group'])
-def send_help(message):
+def id37bot_send_group(message):
     message.from_user.id
     id37bot.reply_to(message, message.chat.id)
 
@@ -131,19 +131,31 @@ bots.append(gptaidbot)
 
 @gptaidbot.message_handler(commands=['help', 'start'])
 def send_start(message):
-    url = 'http://localhost:' + \
-        os.environ.get('GPTAIDBOT_PORT')+'/start'
+    url = 'http://localhost:' + str(os.environ.get('GPTAIDBOT_PORT')) + '/start'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     gptaidbot.reply_to(message, ""+str(content.json()['result']))
 
 
+@gptaidbot.message_handler(func=lambda message: True, content_types=['text'])
+def send_message(message):
+    url = 'http://localhost:' + str(os.environ.get('GPTAIDBOT_PORT')) + '/message'
+    data = {
+        "user_id": message.from_user.id,
+        "user_name": message.from_user.username,
+        "chat_id": message.chat.id,
+        "chat_type": message.chat.type,
+        "text": message.text
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    gptaidbot.reply_to(message, ""+str(content.json()['result']))
+
+
 @gptaidbot.inline_handler(func=lambda chosen_inline_result: True)
-def query_text(inline_query):
-    # logger.info("@gptaidbot inline query: {}".format(inline_query.query))
-    url = 'http://localhost:' + \
-        os.environ.get('GPTAIDBOT_PORT')+'/inline'
+def send_inline(inline_query):
+    url = 'http://localhost:' + str(os.environ.get('GPTAIDBOT_PORT')) + '/inline'
     data = {
         "user_id": inline_query.from_user.id,
         "query": inline_query.query
@@ -165,7 +177,6 @@ def query_text(inline_query):
         cache_time=0,
         is_personal=True
     )
-    # logger.info('@gptaidbot answer_inline_query: '+str(answer))
 # === @gptaidbot --
 
 
@@ -276,7 +287,7 @@ def send_help(message):
 
 
 @calcubot.message_handler(func=lambda message: True, content_types=['text'])
-def send_user(message):
+def calcubot_send_user(message):
     if granted_user(message.from_user.id):
         url = 'http://localhost:'+os.environ.get('CALCUBOT_PORT')+'/message'
         reaction = True
@@ -321,7 +332,7 @@ def send_user(message):
 
 
 @calcubot.inline_handler(func=lambda chosen_inline_result: True)
-def query_text(inline_query):
+def calcubot_query_text(inline_query):
     if granted_user(inline_query.from_user.id) and calcubot_sequrity(inline_query.query, inline_query.from_user.id):
 
         message_text_prepared = inline_query.query.strip()
@@ -394,7 +405,7 @@ bots.append(langteabot)
 
 
 @langteabot.message_handler(commands=['check_balance'])
-def echo_message(message):
+def langteabot_check_balance(message):
     url = 'http://localhost:' + \
         os.environ.get('LANGTEABOT_PORT')+'/check_balance'
     data = {"user_id": message.from_user.id}
@@ -404,7 +415,7 @@ def echo_message(message):
 
 
 @langteabot.message_handler(commands=['show_prompt'])
-def echo_message(message):
+def langteabot_show_prompt(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/show_prompt'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
@@ -413,7 +424,7 @@ def echo_message(message):
 
 
 @langteabot.message_handler(commands=['reset'])
-def echo_message(message):
+def langteabot_reset(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/reset_prompt'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
@@ -422,7 +433,7 @@ def echo_message(message):
 
 
 @langteabot.message_handler(commands=['set_prompt'])
-def echo_message(message):
+def langteabot_set_prompt(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/set_prompt'
     data = {
         "user_id": message.from_user.id,
@@ -434,7 +445,7 @@ def echo_message(message):
 
 
 @langteabot.message_handler(commands=['last_message'])
-def last_message(message):
+def langteabot_last_message(message):
     url = 'http://localhost:'+os.environ.get('LANGTEABOT_PORT')+'/last_message'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
