@@ -58,6 +58,8 @@ def save_message(user_id, user_name, chat_id, chat_type, message):
             os.makedirs(user_path)
         # Each message saved as a new file with date and user name in a filename
         file_name = f"{user_path}/{date_time}_{user_name}.txt"
+        with open(file_name, "w") as f:
+            f.write(message)
 
 
 @app.route("/message", methods=["POST"])
