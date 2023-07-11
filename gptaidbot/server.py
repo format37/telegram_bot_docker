@@ -67,7 +67,7 @@ def save_message(user_id, user_name, chat_id, chat_type, message):
         with open(os.path.join(user_path, file_name), "w") as f:
             json.dump(data, f)
 
-def read_latest_message(user_id, chat_id, chat_type)
+def read_latest_message(user_id, chat_id, chat_type):
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("read group chat")
         # Create group id folder in the data path if not exist
