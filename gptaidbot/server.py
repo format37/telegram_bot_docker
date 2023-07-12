@@ -168,7 +168,8 @@ def call_message():
             reaction = True
             message = message[2:].strip()
     else:
-        reaction = True
+        # reaction = True
+        reaction = False # TODO: remove this line
         config = read_config(user_id)
             
     # Define the prompt
