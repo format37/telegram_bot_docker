@@ -136,11 +136,8 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt):
             # messages.append(data["user_name"]+': '+data["message"])
             # chat_gpt_prompt.append({"role": "user", "content": str(message)})
             chat_gpt_prompt.append({"role": data["user_name"], "content": data["message"]})
-
-    # Concatenate messages into a single string
-    # messages_text = "\n".join(messages)
-
-    # return messages_text
+            
+    return chat_gpt_prompt
 
 
 @app.route("/message", methods=["POST"])
