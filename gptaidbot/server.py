@@ -33,6 +33,26 @@ def text_chat_gpt(prompt, model):
     return answer
 
 
+def load_default_config(user_id):
+    conf_path = 'user_conf/'
+    with open(conf_path+'config.json', 'r') as f:
+        config = json.load(f)
+    
+    return config
+
+
+def read_config(user_id):
+    conf_path = 'user_conf/'
+    # if user.json conf not in user_conf folder, create it
+    # default config file: config.json
+    if not os.path.exists(conf_path+user_id+'.json'):
+        config = load_default_config(user_id)
+    else:
+        with open(conf_path+user_id+'.json', 'r') as f:
+            config = json.load(f)
+    return config
+
+
 @app.route("/start", methods=["POST"])
 def call_start():
     r = request.get_json()
@@ -103,8 +123,38 @@ def call_message():
     message = r_dict["text"]
     # Save the message
     save_message(user_id, user_name, chat_id, chat_type, message)
+    
     # Define the default answer
-    result = read_latest_message(user_id, chat_id, chat_type)
+    result = ""
+    if chat_type == 'group' or chat_type == 'supergroup':
+        if message.startswith("/?") and len(message.strip()) > 2:
+            logger.info("group chat")
+            message = message[2:].strip()
+            # Read the latest message
+            # latest_message = read_latest_message(user_id, chat_id, chat_type)
+            # Read config
+            config = read_config(chat_id)
+            # Define the prompt
+            chat_gpt_prompt = config['chat_gpt_prompt']
+            chat_gpt_prompt.append({"role": "user", "content": str(message)})
+            # Call GPT
+            answer = text_chat_gpt(chat_gpt_prompt, config['model'])
+            # Get the answer
+            result = answer["choices"][0]["text"]
+            # Save the message
+            save_message('system', 'system', chat_id, chat_type, result)
+    else:
+        config = read_config(user_id)
+        chat_gpt_prompt = config['chat_gpt_prompt']
+        chat_gpt_prompt.append({"role": "user", "content": str(message)})
+        # try:
+        openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
+        result = openai_response['choices'][0]['message']['content']
+        save_message('system', 'system', chat_id, chat_type, result)
+        """except Exception as e:
+            err = "Error: {}".format(e)
+            logger.info(err)
+            openai_response = err"""
 
     return jsonify({"result": result})
 
@@ -112,7 +162,7 @@ def call_message():
 @app.route("/inline", methods=["POST"])
 def call_inline_rev0():
     r = request.get_json()
-    logger.info("request data: {}".format(r))    
+    logger.info("request data: {}".format(r))
     # Assuming r is a JSON-formatted string
     r_dict = json.loads(r)
     user_id = r_dict["user_id"]
