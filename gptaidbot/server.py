@@ -71,7 +71,7 @@ def save_message(user_id, user_name, chat_id, chat_type, message):
         "message": message,
     }
     if chat_type == 'group' or chat_type == 'supergroup':
-        logger.info("group chat")
+        logger.info("group chat: "+str(chat_id))
         # Create group id folder in the data path if not exist
         group_path = os.path.join("data", "groups", str(chat_id))
         os.makedirs(group_path, exist_ok=True)
@@ -80,7 +80,7 @@ def save_message(user_id, user_name, chat_id, chat_type, message):
         with open(os.path.join(group_path, file_name), "w") as f:
             json.dump(data, f)
     else:
-        logger.info("private chat")
+        logger.info("private chat: "+str(user_id))
         # Create user id folder in the data path if not exist
         user_path = os.path.join("data", "users", str(user_id))
         os.makedirs(user_path, exist_ok=True)
