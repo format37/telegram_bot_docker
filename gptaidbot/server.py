@@ -204,7 +204,8 @@ def token_counter(text, model):
     # To get the tokeniser corresponding to a specific model in the OpenAI API:
     enc = tiktoken.encoding_for_model(model)
     tokens = enc.encode(str(text))
-    return jsonify({"tokens": len(tokens)})
+    # return jsonify({"tokens": len(tokens)})
+    return len(tokens)
 
 
 @app.route("/inline", methods=["POST"])
