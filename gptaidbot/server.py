@@ -163,50 +163,32 @@ def call_message():
     reaction = False
     if chat_type == 'group' or chat_type == 'supergroup':
         # Read config
-        config = read_config(chat_id)
-        
+        config = read_config(chat_id)        
         if message.startswith("/?") and len(message.strip()) > 2:
-            # logger.info("group chat")
             reaction = True
             message = message[2:].strip()
-            # chat_gpt_prompt.append({"role": "user", "content": str(message)})            
-            # result = read_latest_messages(user_id, chat_id, chat_type)
-            # Call GPT
-            """answer = text_chat_gpt(chat_gpt_prompt, config['model'])
-            # Get the answer
-            result = answer["choices"][0]["text"]
-            # Save the message
-            save_message('system', 'system', chat_id, chat_type, result)"""            
     else:
-        config = read_config(user_id)
         reaction = True
-    
+        config = read_config(user_id)
+            
     # Define the prompt
     chat_gpt_prompt = config['chat_gpt_prompt']
     # Save the original message
     save_message(user_id, user_name, chat_id, chat_type, message)
 
-    chat_gpt_prompt = read_latest_messages(
-        user_id, 
-        chat_id, 
-        chat_type, 
-        chat_gpt_prompt
-        )
-    
-    logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
-    # result = str(chat_gpt_prompt)
-    # chat_gpt_prompt.append({"role": "user", "content": str(message)})
-    # try:
-    openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
-    result = openai_response['choices'][0]['message']['content']
-    
-    """except Exception as e:
-        err = "Error: {}".format(e)
-        logger.info(err)
-        openai_response = err"""
-    
-    # Save the answer
-    save_message('assistant', 'assistant', chat_id, chat_type, result)
+    if reaction:
+        chat_gpt_prompt = read_latest_messages(
+            user_id, 
+            chat_id, 
+            chat_type, 
+            chat_gpt_prompt
+            )        
+        logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
+        openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
+        result = openai_response['choices'][0]['message']['content']
+
+        # Save the answer
+        save_message('assistant', 'assistant', chat_id, chat_type, result)
 
     return jsonify({"result": result})
 

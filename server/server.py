@@ -150,7 +150,9 @@ def send_message(message):
         }
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    gptaidbot.reply_to(message, ""+str(content.json()['result']))
+    result = content.json()['result']
+    if result != '':
+        gptaidbot.reply_to(message, ""+str(content.json()['result']))
 
 
 @gptaidbot.inline_handler(func=lambda chosen_inline_result: True)
