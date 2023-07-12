@@ -164,7 +164,7 @@ def call_message():
     if chat_type == 'group' or chat_type == 'supergroup':
         # Read config
         config = read_config(chat_id)        
-        if message.startswith("/?") and len(message.strip()) > 2:
+        if message.startswith("/*") and len(message.strip()) > 2:
             reaction = True
             message = message[2:].strip()
     else:
