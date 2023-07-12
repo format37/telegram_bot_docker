@@ -115,7 +115,6 @@ def read_latest_message(user_id, chat_id, chat_type):
 def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, model):
     token_limit = 600
     chat_gpt_prompt = []
-    # messages = []
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("read group chat")
         # Create group id folder in the data path if not exist
@@ -139,8 +138,6 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
         if token_counter(chat_gpt_prompt, model)<token_limit:
             with open(file_name, "r") as f:
                 data = json.load(f)
-                # messages.append(data["user_name"]+': '+data["message"])
-                # chat_gpt_prompt.append({"role": "user", "content": str(message)})
                 if data["user_name"] == "assistant":
                     role = "assistant"
                     chat_gpt_prompt.append({"role": role, "content": data["message"]})
@@ -150,7 +147,7 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
         else:
             # Remove file in path
             logger.info("token limit reached. removing file: "+file_name)
-            # os.remove(file_name) 
+            os.remove(file_name) 
 
     # Sort chat_gpt_prompt reversed
     chat_gpt_prompt.reverse()
