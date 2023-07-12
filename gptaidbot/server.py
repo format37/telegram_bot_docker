@@ -43,6 +43,7 @@ def load_default_config(user_id):
 
 def read_config(user_id):
     conf_path = 'user_conf/'
+    user_id = str(user_id)
     # if user.json conf not in user_conf folder, create it
     # default config file: config.json
     if not os.path.exists(conf_path+user_id+'.json'):
