@@ -135,7 +135,13 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt):
             data = json.load(f)
             # messages.append(data["user_name"]+': '+data["message"])
             # chat_gpt_prompt.append({"role": "user", "content": str(message)})
-            chat_gpt_prompt.append({"role": data["user_name"], "content": data["message"]})
+            if data["user_name"] == "assistant":
+                role = "assistant"
+                chat_gpt_prompt.append({"role": role, "content": data["message"]})
+            else:
+                role = "user"
+                chat_gpt_prompt.append({"role": role, "content": data["user_name"]+': '+data["message"]})
+            
 
     return chat_gpt_prompt
 
@@ -178,7 +184,7 @@ def call_message():
     # Define the prompt
     chat_gpt_prompt = config['chat_gpt_prompt']
     # Save the original message
-    save_message(user_id, "user", chat_id, chat_type, user_name+": "+message)
+    save_message(user_id, user_name, chat_id, chat_type, message)
 
     chat_gpt_prompt = read_latest_messages(
         user_id, 
