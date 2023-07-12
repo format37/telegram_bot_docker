@@ -1,0 +1,6 @@
+{
+    "chat_gpt_prompt": [{"role": "system", "content": "You are a helpful assistant."}],
+    "chat_gpt_init_prompt": [{"role": "system", "content": "You are a helpful assistant."}],
+    "last_cmd": "start",
+    "model": "gpt-4"
+}
