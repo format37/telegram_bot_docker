@@ -203,7 +203,7 @@ def call_message():
 def token_counter(text, model):
     # To get the tokeniser corresponding to a specific model in the OpenAI API:
     enc = tiktoken.encoding_for_model(model)
-    tokens = enc.encode(text)
+    tokens = enc.encode(str(text))
     return jsonify({"tokens": len(tokens)})
 
 
