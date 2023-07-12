@@ -187,7 +187,7 @@ def call_message():
             )
         # logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
         prompt_tokents = token_counter(chat_gpt_prompt, config['model'])
-        logger.info("prompt_tokents: {}".format(prompt_tokents['tokens']))
+        logger.info("prompt_tokents: {}".format(prompt_tokents))
         openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
         result = openai_response['choices'][0]['message']['content']
         logger.info("result: {}".format(result))
