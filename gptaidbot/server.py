@@ -205,11 +205,10 @@ def call_message():
         openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
         result = openai_response['choices'][0]['message']['content']
         logger.info("result: {}".format(result))
-        # Replace 'assistant: ' with ''
-        result = result.replace('assistant: ', '')
-
         # Save the answer
         save_message('assistant', 'assistant', chat_id, chat_type, result)
+        # Replace 'assistant: ' with ''
+        result = result.replace('assistant: ', '')
 
     return jsonify({"result": result})
 
