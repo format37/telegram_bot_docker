@@ -111,8 +111,8 @@ def read_latest_message(user_id, chat_id, chat_type):
         return data["message"]
     
 
-def read_latest_messages(user_id, chat_id, chat_type):
-    messages = []
+def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt):
+    # messages = []
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("read group chat")
         # Create group id folder in the data path if not exist
@@ -133,12 +133,14 @@ def read_latest_messages(user_id, chat_id, chat_type):
     for file_name in list_of_files:
         with open(file_name, "r") as f:
             data = json.load(f)
-            messages.append(data["user_name"]+': '+data["message"])
+            # messages.append(data["user_name"]+': '+data["message"])
+            # chat_gpt_prompt.append({"role": "user", "content": str(message)})
+            chat_gpt_prompt.append({"role": data["user_name"], "content": data["message"]})
 
     # Concatenate messages into a single string
-    messages_text = "\n".join(messages)
+    # messages_text = "\n".join(messages)
 
-    return messages_text
+    # return messages_text
 
 
 @app.route("/message", methods=["POST"])
@@ -153,19 +155,19 @@ def call_message():
     chat_type = r_dict["chat_type"]
     message = r_dict["text"]
     
-    
     # Define the default answer
     result = ""
+    reaction = False
     if chat_type == 'group' or chat_type == 'supergroup':
+        # Read config
+        config = read_config(chat_id)
+        
         if message.startswith("/?") and len(message.strip()) > 2:
-            logger.info("group chat")
+            # logger.info("group chat")
+            reaction = True
             message = message[2:].strip()
-            # Read config
-            config = read_config(chat_id)
-            # Define the prompt
-            chat_gpt_prompt = config['chat_gpt_prompt']
-            chat_gpt_prompt.append({"role": "user", "content": str(message)})            
-            result = read_latest_messages(user_id, chat_id, chat_type)
+            # chat_gpt_prompt.append({"role": "user", "content": str(message)})            
+            # result = read_latest_messages(user_id, chat_id, chat_type)
             # Call GPT
             """answer = text_chat_gpt(chat_gpt_prompt, config['model'])
             # Get the answer
@@ -174,18 +176,31 @@ def call_message():
             save_message('system', 'system', chat_id, chat_type, result)"""            
     else:
         config = read_config(user_id)
-        chat_gpt_prompt = config['chat_gpt_prompt']
-        chat_gpt_prompt.append({"role": "user", "content": str(message)})
-        # try:
-        openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
-        result = openai_response['choices'][0]['message']['content']
-        
-        """except Exception as e:
-            err = "Error: {}".format(e)
-            logger.info(err)
-            openai_response = err"""
+        reaction = True
+    
+    # Define the prompt
+    chat_gpt_prompt = config['chat_gpt_prompt']
     # Save the original message
     save_message(user_id, user_name, chat_id, chat_type, message)
+
+    chat_gpt_prompt = read_latest_messages(
+        user_id, 
+        chat_id, 
+        chat_type, 
+        chat_gpt_prompt
+        )
+    
+    result = str(chat_gpt_prompt)
+    # chat_gpt_prompt.append({"role": "user", "content": str(message)})
+    # try:
+    # openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
+    # result = openai_response['choices'][0]['message']['content']
+    
+    """except Exception as e:
+        err = "Error: {}".format(e)
+        logger.info(err)
+        openai_response = err"""
+    
     # Save the answer
     save_message('system', 'system', chat_id, chat_type, result)
 
