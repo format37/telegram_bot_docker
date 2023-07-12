@@ -178,7 +178,7 @@ def call_message():
     # Define the prompt
     chat_gpt_prompt = config['chat_gpt_prompt']
     # Save the original message
-    save_message(user_id, user_name, chat_id, chat_type, message)
+    save_message(user_id, "user", chat_id, chat_type, user_name+": "+message)
 
     chat_gpt_prompt = read_latest_messages(
         user_id, 
@@ -200,7 +200,7 @@ def call_message():
         openai_response = err"""
     
     # Save the answer
-    save_message('system', 'system', chat_id, chat_type, result)
+    save_message('assistant', 'assistant', chat_id, chat_type, result)
 
     return jsonify({"result": result})
 
