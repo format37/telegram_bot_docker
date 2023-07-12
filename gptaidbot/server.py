@@ -109,6 +109,36 @@ def read_latest_message(user_id, chat_id, chat_type):
         with open(latest_file, "r") as f:
             data = json.load(f)
         return data["message"]
+    
+
+def read_latest_messages(user_id, chat_id, chat_type):
+    messages = []
+    if chat_type == 'group' or chat_type == 'supergroup':
+        logger.info("read group chat")
+        # Create group id folder in the data path if not exist
+        group_path = os.path.join("data", "groups", str(chat_id))
+        # Get all files in folder
+        list_of_files = glob.glob(group_path + "/*.json")
+    else:
+        logger.info("read private chat")
+        # Create user id folder in the data path if not exist
+        user_path = os.path.join("data", "users", str(user_id))
+        # Get all files in folder
+        list_of_files = glob.glob(user_path + "/*.json")
+
+    # Sort files by creation time
+    list_of_files.sort(key=os.path.getctime)
+
+    # Iterate over sorted files and append message to messages list
+    for file_name in list_of_files:
+        with open(file_name, "r") as f:
+            data = json.load(f)
+            messages.append(data["user_name"]+': '+data["message"])
+
+    # Concatenate messages into a single string
+    messages_text = "\n".join(messages)
+
+    return messages_text
 
 
 @app.route("/message", methods=["POST"])
@@ -138,12 +168,15 @@ def call_message():
             # Define the prompt
             chat_gpt_prompt = config['chat_gpt_prompt']
             chat_gpt_prompt.append({"role": "user", "content": str(message)})
+            
+            result = read_latest_messages(user_id, chat_id, chat_type)
             # Call GPT
-            answer = text_chat_gpt(chat_gpt_prompt, config['model'])
+            """answer = text_chat_gpt(chat_gpt_prompt, config['model'])
             # Get the answer
             result = answer["choices"][0]["text"]
             # Save the message
-            save_message('system', 'system', chat_id, chat_type, result)
+            save_message('system', 'system', chat_id, chat_type, result)"""
+            
     else:
         config = read_config(user_id)
         chat_gpt_prompt = config['chat_gpt_prompt']
