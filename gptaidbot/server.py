@@ -112,37 +112,44 @@ def read_latest_message(user_id, chat_id, chat_type):
         return data["message"]
     
 
-def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt):
+def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt, model):
+    token_limit = 600
     # messages = []
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("read group chat")
         # Create group id folder in the data path if not exist
-        group_path = os.path.join("data", "groups", str(chat_id))
+        path = os.path.join("data", "groups", str(chat_id))
         # Get all files in folder
-        list_of_files = glob.glob(group_path + "/*.json")
+        list_of_files = glob.glob(path + "/*.json")
     else:
         logger.info("read private chat")
         # Create user id folder in the data path if not exist
-        user_path = os.path.join("data", "users", str(user_id))
+        path = os.path.join("data", "users", str(user_id))
         # Get all files in folder
-        list_of_files = glob.glob(user_path + "/*.json")
+        list_of_files = glob.glob(path + "/*.json")
 
-    # Sort files by creation time
-    list_of_files.sort(key=os.path.getctime)
+    # Sort files by creation time ascending
+    list_of_files.sort(key=os.path.getctime, reverse=True)
 
     # Iterate over sorted files and append message to messages list
     for file_name in list_of_files:
-        with open(file_name, "r") as f:
-            data = json.load(f)
-            # messages.append(data["user_name"]+': '+data["message"])
-            # chat_gpt_prompt.append({"role": "user", "content": str(message)})
-            if data["user_name"] == "assistant":
-                role = "assistant"
-                chat_gpt_prompt.append({"role": role, "content": data["message"]})
-            else:
-                role = "user"
-                chat_gpt_prompt.append({"role": role, "content": data["user_name"]+': '+data["message"]})
-            
+        logger.info("reading file: "+file_name)
+        # Calculate the token length of the message
+        if token_counter(chat_gpt_prompt, model)<token_limit:
+            with open(file_name, "r") as f:
+                data = json.load(f)
+                # messages.append(data["user_name"]+': '+data["message"])
+                # chat_gpt_prompt.append({"role": "user", "content": str(message)})
+                if data["user_name"] == "assistant":
+                    role = "assistant"
+                    chat_gpt_prompt.append({"role": role, "content": data["message"]})
+                else:
+                    role = "user"
+                    chat_gpt_prompt.append({"role": role, "content": data["user_name"]+': '+data["message"]})
+        else:
+            # Remove file in path
+            logger.info("token limit reached. removing file: "+file_name)
+            # os.remove(file_name)            
 
     return chat_gpt_prompt
 
@@ -183,7 +190,8 @@ def call_message():
             user_id, 
             chat_id, 
             chat_type, 
-            chat_gpt_prompt
+            chat_gpt_prompt,
+            config['model']
             )
         # logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
         prompt_tokents = token_counter(chat_gpt_prompt, config['model'])
@@ -201,10 +209,8 @@ def call_message():
 
 
 def token_counter(text, model):
-    # To get the tokeniser corresponding to a specific model in the OpenAI API:
     enc = tiktoken.encoding_for_model(model)
     tokens = enc.encode(str(text))
-    # return jsonify({"tokens": len(tokens)})
     return len(tokens)
 
 
