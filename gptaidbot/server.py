@@ -152,8 +152,7 @@ def call_message():
     chat_id = r_dict["chat_id"]
     chat_type = r_dict["chat_type"]
     message = r_dict["text"]
-    # Save the message
-    save_message(user_id, user_name, chat_id, chat_type, message)
+    
     
     # Define the default answer
     result = ""
@@ -161,22 +160,18 @@ def call_message():
         if message.startswith("/?") and len(message.strip()) > 2:
             logger.info("group chat")
             message = message[2:].strip()
-            # Read the latest message
-            # latest_message = read_latest_message(user_id, chat_id, chat_type)
             # Read config
             config = read_config(chat_id)
             # Define the prompt
             chat_gpt_prompt = config['chat_gpt_prompt']
-            chat_gpt_prompt.append({"role": "user", "content": str(message)})
-            
+            chat_gpt_prompt.append({"role": "user", "content": str(message)})            
             result = read_latest_messages(user_id, chat_id, chat_type)
             # Call GPT
             """answer = text_chat_gpt(chat_gpt_prompt, config['model'])
             # Get the answer
             result = answer["choices"][0]["text"]
             # Save the message
-            save_message('system', 'system', chat_id, chat_type, result)"""
-            
+            save_message('system', 'system', chat_id, chat_type, result)"""            
     else:
         config = read_config(user_id)
         chat_gpt_prompt = config['chat_gpt_prompt']
@@ -184,17 +179,21 @@ def call_message():
         # try:
         openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
         result = openai_response['choices'][0]['message']['content']
-        save_message('system', 'system', chat_id, chat_type, result)
+        
         """except Exception as e:
             err = "Error: {}".format(e)
             logger.info(err)
             openai_response = err"""
+    # Save the original message
+    save_message(user_id, user_name, chat_id, chat_type, message)
+    # Save the answer
+    save_message('system', 'system', chat_id, chat_type, result)
 
     return jsonify({"result": result})
 
 
 @app.route("/inline", methods=["POST"])
-def call_inline_rev0():
+def call_inline():
     r = request.get_json()
     logger.info("request data: {}".format(r))
     # Assuming r is a JSON-formatted string
