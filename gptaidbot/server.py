@@ -112,8 +112,9 @@ def read_latest_message(user_id, chat_id, chat_type):
         return data["message"]
     
 
-def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt, model):
+def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, model):
     token_limit = 600
+    chat_gpt_prompt = []
     # messages = []
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("read group chat")
@@ -149,9 +150,17 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt, model):
         else:
             # Remove file in path
             logger.info("token limit reached. removing file: "+file_name)
-            # os.remove(file_name)            
+            # os.remove(file_name) 
 
-    return chat_gpt_prompt
+    # Sort chat_gpt_prompt reversed
+    chat_gpt_prompt.reverse()
+    # Now add all values of chat_gpt_prompt to chat_gpt_prompt_original
+    for item in chat_gpt_prompt:
+        chat_gpt_prompt_original.append(item)
+
+    logger.info("chat_gpt_prompt_original: "+str(chat_gpt_prompt_original))
+
+    return chat_gpt_prompt_original
 
 
 @app.route("/message", methods=["POST"])
