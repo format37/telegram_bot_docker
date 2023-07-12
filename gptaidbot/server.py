@@ -136,7 +136,7 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt):
             # messages.append(data["user_name"]+': '+data["message"])
             # chat_gpt_prompt.append({"role": "user", "content": str(message)})
             chat_gpt_prompt.append({"role": data["user_name"], "content": data["message"]})
-            
+
     return chat_gpt_prompt
 
 
@@ -187,11 +187,12 @@ def call_message():
         chat_gpt_prompt
         )
     
-    result = str(chat_gpt_prompt)
+    logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
+    # result = str(chat_gpt_prompt)
     # chat_gpt_prompt.append({"role": "user", "content": str(message)})
     # try:
-    # openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
-    # result = openai_response['choices'][0]['message']['content']
+    openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
+    result = openai_response['choices'][0]['message']['content']
     
     """except Exception as e:
         err = "Error: {}".format(e)
