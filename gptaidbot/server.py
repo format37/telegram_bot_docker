@@ -7,6 +7,7 @@ import openai
 import datetime
 import json
 import glob
+import tiktoken
 
 
 logging.basicConfig(level=logging.INFO)
@@ -183,11 +184,13 @@ def call_message():
             chat_id, 
             chat_type, 
             chat_gpt_prompt
-            )        
-        logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
+            )
+        # logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
+        prompt_tokents = token_counter(chat_gpt_prompt, config['model'])
+        logger.info("prompt_tokents: {}".format(prompt_tokents))
         openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
         result = openai_response['choices'][0]['message']['content']
-
+        logger.info("result: {}".format(result))
         # Replace 'assistant: ' with ''
         result = result.replace('assistant: ', '')
 
@@ -195,6 +198,13 @@ def call_message():
         save_message('assistant', 'assistant', chat_id, chat_type, result)
 
     return jsonify({"result": result})
+
+
+def token_counter(text, model):
+    # To get the tokeniser corresponding to a specific model in the OpenAI API:
+    enc = tiktoken.encoding_for_model(model)
+    tokens = enc.encode(text)
+    return jsonify({"tokens": len(tokens)})
 
 
 @app.route("/inline", methods=["POST"])
