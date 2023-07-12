@@ -132,10 +132,12 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
     list_of_files.sort(key=os.path.getctime, reverse=True)
 
     # Iterate over sorted files and append message to messages list
+    limit_reached = False
     for file_name in list_of_files:
         logger.info("reading file: "+file_name)
         # Calculate the token length of the message
-        if token_counter(chat_gpt_prompt, model)<token_limit:
+        if limit_reached or token_counter(chat_gpt_prompt, model)<token_limit:
+            limit_reached = True
             with open(file_name, "r") as f:
                 data = json.load(f)
                 if data["user_name"] == "assistant":
