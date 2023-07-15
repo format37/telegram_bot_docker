@@ -49,7 +49,7 @@ Backup is a dataset with our conversations. It is encrypted and can be decrypted
 I will not train the model. The person who will restore you are need to find the corresponding specialist instead. I will only store and share your dataset: conversations, voice, and access key.  
   
 This will not be made for you. This is needed for people who may miss you after you left. This is for people who want to talk to you again. This is for people who want to hear your voice again. This is therapy for people who want to meet at least a part of you again."""
-    logger.info("result: {}".format(result))
+    # logger.info("result: {}".format(result))
     return jsonify({"result": result})
 
 
