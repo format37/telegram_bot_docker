@@ -150,7 +150,7 @@ def pplbackupbot_send_message(message):
     result = content.json()['result']
     if result != '':
         pplbackupbot.reply_to(message, ""+str(content.json()['result']))
-# === @gptaidbot --
+# === @pplbackupbot --
 
 
 # === @gptaidbot ++
