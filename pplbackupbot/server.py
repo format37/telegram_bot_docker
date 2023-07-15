@@ -77,47 +77,33 @@ def call_message():
     r_dict = json.loads(r)
     user_id = r_dict["user_id"]
     user_name = r_dict["user_name"]
-    chat_id = r_dict["chat_id"]
-    chat_type = r_dict["chat_type"]
     message = r_dict["text"]
     
     # Define the default answer
     result = ""
-    reaction = False
-    if chat_type == 'group' or chat_type == 'supergroup':
-        # Read config
-        config = read_config(chat_id)        
-        if message.startswith("/*") and len(message.strip()) > 2:
-            reaction = True
-            message = message[2:].strip()
-    else:
-        # reaction = True
-        reaction = False # TODO: remove this line
-        config = read_config(user_id)
+    config = read_config(user_id)
             
     # Define the prompt
     chat_gpt_prompt = config['chat_gpt_prompt']
     # Save the original message
     # save_message(user_id, user_name, chat_id, chat_type, message)
-
-    if reaction:
-        """chat_gpt_prompt = read_latest_messages(
-            user_id, 
-            chat_id, 
-            chat_type, 
-            chat_gpt_prompt,
-            config['model']
-            )"""
-        # logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
-        prompt_tokents = token_counter(chat_gpt_prompt, config['model'])
-        logger.info("prompt_tokents: {}".format(prompt_tokents))
-        openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
-        result = openai_response['choices'][0]['message']['content']
-        logger.info("result: {}".format(result))
-        # Save the answer
-        # save_message('assistant', 'assistant', chat_id, chat_type, result)
-        # Replace 'assistant: ' with ''
-        result = result.replace('assistant: ', '')
+    """chat_gpt_prompt = read_latest_messages(
+        user_id, 
+        chat_id, 
+        chat_type, 
+        chat_gpt_prompt,
+        config['model']
+        )"""
+    # logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
+    prompt_tokents = token_counter(chat_gpt_prompt, config['model'])
+    logger.info("prompt_tokents: {}".format(prompt_tokents))
+    openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
+    result = openai_response['choices'][0]['message']['content']
+    logger.info("result: {}".format(result))
+    # Save the answer
+    # save_message('assistant', 'assistant', chat_id, chat_type, result)
+    # Replace 'assistant: ' with ''
+    result = result.replace('assistant: ', '')
 
     return jsonify({"result": result})
 

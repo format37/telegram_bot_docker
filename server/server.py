@@ -124,6 +124,35 @@ def id37bot_send_group(message):
 # === @id37bot --
 
 
+# === @pplbackupbot ++
+pplbackupbot = default_bot_init('PPLBACKUPBOT_TOKEN')
+bots.append(pplbackupbot)
+
+@pplbackupbot.message_handler(commands=['help', 'start'])
+def pplbackupbot_send_start(message):
+    url = 'http://localhost:' + str(os.environ.get('PPLBACKUPBOT_PORT')) + '/start'
+    data = {"user_id": message.from_user.id}
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    pplbackupbot.reply_to(message, ""+str(content.json()['result']))
+
+
+@pplbackupbot.message_handler(func=lambda message: True, content_types=['text'])
+def pplbackupbot_send_message(message):
+    url = 'http://localhost:' + str(os.environ.get('PPLBACKUPBOT_PORT')) + '/message'
+    data = {
+        "user_id": message.from_user.id,
+        "user_name": message.from_user.username,
+        "text": message.text
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    result = content.json()['result']
+    if result != '':
+        pplbackupbot.reply_to(message, ""+str(content.json()['result']))
+# === @gptaidbot --
+
+
 # === @gptaidbot ++
 gptaidbot = default_bot_init('GPTAIDBOT_TOKEN')
 bots.append(gptaidbot)
