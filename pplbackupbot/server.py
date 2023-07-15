@@ -74,7 +74,7 @@ def read_config(user_id):
     return config
 
 
-def save_message(speaker, conversation_id, message, user_id):
+"""def save_message(speaker, conversation_id, message, user_id):
     # Set the filename as the user_id
     filename = f'user_conf/{user_id}/conversations.csv'
     os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -127,7 +127,7 @@ def read_latest_messages(user_id, chat_gpt_prompt):
             message = {"role": role, "content": row['message']}
             chat_gpt_prompt.append(message)
 
-    return chat_gpt_prompt
+    return chat_gpt_prompt"""
 
 
 @app.route("/message", methods=["POST"])
@@ -148,12 +148,12 @@ def call_message():
     # chat_gpt_prompt =  [{"role": "system", "content": "I am a Digital Continuity Assistant."}],
     chat_gpt_prompt = config['chat_gpt_prompt']    
     # Save the original message
-    save_message(user_name, config['conversation_id'], message, user_id)
+    # save_message(user_name, config['conversation_id'], message, user_id)
     # chat_gpt_prompt =  [{"role": "system", "content": "I am a Digital Continuity Assistant."}, {"role": "user", "content": message}]
-    chat_gpt_prompt = read_latest_messages(
+    """chat_gpt_prompt = read_latest_messages(
         user_id, 
         chat_gpt_prompt
-        )
+        )"""
     # logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
     prompt_tokents = token_counter(chat_gpt_prompt, config['model'])
     logger.info("prompt_tokents: {}".format(prompt_tokents))
@@ -162,7 +162,7 @@ def call_message():
     logger.info("result: {}".format(result))
     # Save the answer
     # save_message('assistant', 'assistant', chat_id, chat_type, result)
-    save_message('assistant', config['conversation_id'], result, user_id)
+    # save_message('assistant', config['conversation_id'], result, user_id)
     # Replace 'assistant: ' with ''
     result = result.replace('assistant: ', '')
 
