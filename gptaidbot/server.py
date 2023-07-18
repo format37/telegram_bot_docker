@@ -136,8 +136,7 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
     for file_name in list_of_files:
         logger.info("reading file: "+file_name)
         # Calculate the token length of the message
-        if limit_reached or token_counter(chat_gpt_prompt, model)<token_limit:
-            limit_reached = True
+        if limit_reached == False and token_counter(chat_gpt_prompt, model)<token_limit:            
             with open(file_name, "r") as f:
                 data = json.load(f)
                 if data["user_name"] == "assistant":
@@ -147,6 +146,7 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
                     role = "user"
                     chat_gpt_prompt.append({"role": role, "content": data["user_name"]+': '+data["message"]})
         else:
+            limit_reached = True
             # Remove file in path
             logger.info("token limit reached. removing file: "+file_name)
             os.remove(file_name) 
