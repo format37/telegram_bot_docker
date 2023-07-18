@@ -113,7 +113,7 @@ def read_latest_message(user_id, chat_id, chat_type):
     
 
 def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, model):
-    token_limit = 3000
+    token_limit = 2000
     chat_gpt_prompt = []
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("read group chat")
