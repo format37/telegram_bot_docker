@@ -34,15 +34,6 @@ WEBHOOK_SSL_PRIV = 'webhook_pkey.pem'
 # When asked for "Common Name (e.g. server FQDN or YOUR name)" you should reply
 # with the same value in you put in WEBHOOK_HOST
 
-"""logger.info('reading calcubot blocked users')
-df = pd.read_csv('calcubot_blocked/users.csv')
-df = pd.DataFrame(df.user)
-df['user'] = df.user.astype(int)
-df = df.sort_values(by=['user'])
-calcubot_blocked_users = set(df['user'])
-logger.info('Loaded '+str(len(calcubot_blocked_users)) +
-            ' calcubot blocked users')
-"""
 calcubot_unsecure_words = [
         'exec',
         'import',
@@ -102,8 +93,6 @@ async def handle(request):
 
 
 bots = []
-
-
 # === @id37bot ++
 
 id37bot = default_bot_init('ID37BOT_TOKEN')
@@ -120,7 +109,6 @@ def id37bot_send_user(message):
 def id37bot_send_group(message):
     message.from_user.id
     id37bot.reply_to(message, message.chat.id)
-
 # === @id37bot --
 
 
@@ -152,6 +140,40 @@ def pplbackupbot_send_message(message):
         pplbackupbot.reply_to(message, ""+str(content.json()['result']))
 # === @pplbackupbot --
 
+# === youtubesttbot ++
+youtubesttbot = default_bot_init('YOUTUBESTTBOT_TOKEN')
+bots.append(youtubesttbot)
+
+@youtubesttbot.message_handler(func=lambda message: True, content_types=['text'])
+def youtubesttbot(message):
+
+    if not message.text.startswith("https://www.youtube.com/watch"):
+        # youtubesttbot.reply_to(message, "Please send a YouTube video link to transcribe")
+        return
+
+    video_url = message.text
+    
+    data = {
+        "url": video_url,
+        "language": "ru",
+    }
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post("http://localhost:8702/transcribe", json=data, headers=headers)
+    
+    if response.status_code != 200:
+        youtubesttbot.reply_to(message, "Error transcribing video")
+        return
+    
+    transcription = response.json()["transcription"]
+    
+    # youtubesttbot.reply_to(message, transcription)
+    # return transcription as file
+    youtubesttbot.send_document(message.chat.id, transcription.encode('utf-8'), caption='Transcription')
+# === youtubesttbot --
 
 # === @gptaidbot ++
 gptaidbot = default_bot_init('GPTAIDBOT_TOKEN')
