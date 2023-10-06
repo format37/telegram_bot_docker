@@ -13,6 +13,7 @@ from datetime import datetime as dt
 import re
 import pickle
 import csv
+import tempfile
 
 # init logging
 logging.basicConfig(level=logging.INFO)
@@ -177,7 +178,20 @@ def youtubesttbot(message):
     
     # youtubesttbot.reply_to(message, transcription)
     # return transcription as file
-    youtubesttbot.send_document(message.chat.id, transcription.encode('utf-8'), caption='Transcription')
+    # youtubesttbot.send_document(message.chat.id, transcription.encode('utf-8'), caption='Transcription')
+    try:
+        with tempfile.NamedTemporaryFile(suffix='.txt') as tf:
+            tf.write(transcription.encode('utf-8'))
+            tf.flush()
+            youtubesttbot.send_document(
+                message.chat.id, 
+                tf.name, 
+                caption='Transcription'
+            )
+    except Exception as e:
+        logger.error(e)
+    finally:
+        os.remove(tf.name)
 # === youtubesttbot --
 
 # === @gptaidbot ++
