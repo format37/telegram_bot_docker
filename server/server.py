@@ -16,6 +16,8 @@ import csv
 
 # init logging
 logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.WARNING)
+logging.getLogger('aiohttp.access').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -169,6 +171,9 @@ def youtubesttbot(message):
         return
     
     transcription = response.json()["transcription"]
+
+    # Log transcription length
+    logger.info(f"Received a transcription of length: {len(transcription)} for user: {message.from_user.id} from video: {video_url}")
     
     # youtubesttbot.reply_to(message, transcription)
     # return transcription as file
@@ -610,7 +615,7 @@ def main():
         app,
         host=WEBHOOK_LISTEN,
         port=os.environ.get('DOCKER_PORT', ''),
-        ssl_context=context,
+        ssl_context=context
     )
 
 
