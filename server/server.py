@@ -14,6 +14,7 @@ import re
 import pickle
 import csv
 import tempfile
+import uuid
 
 # init logging
 logging.basicConfig(level=logging.INFO)
@@ -154,6 +155,9 @@ def youtubesttbot_message(message):
         # youtubesttbot.reply_to(message, "Please send a YouTube video link to transcribe")
         return
 
+    # Log that request was received
+    logger.info(f"Received a request from user: {message.from_user.id} for video: {message.text}")
+
     video_url = message.text
     
     data = {
@@ -180,18 +184,19 @@ def youtubesttbot_message(message):
     # return transcription as file
     # youtubesttbot.send_document(message.chat.id, transcription.encode('utf-8'), caption='Transcription')
     try:
-        with tempfile.NamedTemporaryFile(suffix='.txt') as tf:
-            tf.write(transcription.encode('utf-8'))
-            tf.flush()
+        filename = f'/{uuid.uuid4().hex}.txt'
+        
+        with open(filename, 'w') as f:
+            f.write(transcription)
+
+        with open(filename, 'rb') as f:
             youtubesttbot.send_document(
                 message.chat.id, 
-                tf.name, 
-                caption='Transcription'
+                f
             )
+        os.remove(filename)
     except Exception as e:
         logger.error(e)
-    finally:
-        os.remove(tf.name)
 # === youtubesttbot --
 
 # === @gptaidbot ++
