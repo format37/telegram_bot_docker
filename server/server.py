@@ -148,7 +148,7 @@ youtubesttbot = default_bot_init('YOUTUBESTTBOT_TOKEN')
 bots.append(youtubesttbot)
 
 @youtubesttbot.message_handler(func=lambda message: True, content_types=['text'])
-def youtubesttbot(message):
+def youtubesttbot_message(message):
 
     if not message.text.startswith("https://www.youtube.com/watch"):
         # youtubesttbot.reply_to(message, "Please send a YouTube video link to transcribe")
