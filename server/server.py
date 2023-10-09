@@ -166,12 +166,19 @@ def youtubesttbot_message(message):
     logger.info(f"update_message type: {type(update_message)}")
     # log update_message attributes
     logger.info(f"update_message attributes: {dir(update_message)}")
+    # log update_message chat id
+    logger.info(f"update_message chat id: {update_message.chat.id}")
+    # log update_message_id
+    logger.info(f"update_message_id: {update_message.message_id}")
+    # log update_message id
+    logger.info(f"update_message id: {update_message.id}")
+    
 
     
     data = {
         "url": video_url,
         "chat_id": update_message.chat.id,
-        "message_id": update_message.message_id
+        "message_id": update_message.id
     }
     
     headers = {
