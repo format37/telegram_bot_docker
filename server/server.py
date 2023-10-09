@@ -176,7 +176,8 @@ def youtubesttbot_message(message):
     data = {
         "url": video_url,
         "chat_id": str(update_message.chat.id),
-        "message_id": str(update_message.message_id)
+        "message_id": str(update_message.message_id),
+        "bot_token": youtubesttbot.token
     }
     
     youtubesttbot.edit_message_text(
