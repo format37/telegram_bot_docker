@@ -162,7 +162,8 @@ def youtubesttbot_message(message):
     
     data = {
         "url": video_url,
-        "language": "ru",
+        "chat_id": message.chat.id,
+        "message_id": message.message_id
     }
     
     headers = {
