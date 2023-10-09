@@ -159,11 +159,15 @@ def youtubesttbot_message(message):
     logger.info(f"Received a request from user: {message.from_user.id} for video: {message.text}")
 
     video_url = message.text
+
+    # Send answer to user that job started and save the message id for future updates
+    update_message = youtubesttbot.reply_to(message, "Transcribing video...")
+
     
     data = {
         "url": video_url,
-        "chat_id": message.chat.id,
-        "message_id": message.message_id
+        "chat_id": update_message.chat.id,
+        "message_id": update_message.message_id
     }
     
     headers = {
