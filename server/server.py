@@ -162,6 +162,10 @@ def youtubesttbot_message(message):
 
     # Send answer to user that job started and save the message id for future updates
     update_message = youtubesttbot.reply_to(message, "Transcribing video...")
+    # log type of update_message
+    logger.info(f"update_message type: {type(update_message)}")
+    # log update_message attributes
+    logger.info(f"update_message attributes: {dir(update_message)}")
 
     
     data = {
