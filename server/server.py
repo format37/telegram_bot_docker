@@ -173,13 +173,17 @@ def youtubesttbot_message(message):
     # log update_message id
     logger.info(f"update_message id: {update_message.id}")
     
-
-    
     data = {
         "url": video_url,
-        "chat_id": update_message.chat.id,
-        "message_id": update_message.id
+        "chat_id": str(update_message.chat.id),
+        "message_id": str(update_message.message_id)
     }
+    
+    youtubesttbot.edit_message_text(
+        "Transcribing video...1", 
+        chat_id=int(data["chat_id"]), 
+        message_id=int(data["message_id"])
+        )
     
     headers = {
         "Content-Type": "application/json"
