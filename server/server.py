@@ -161,7 +161,7 @@ def youtubesttbot_message(message):
     video_url = message.text
 
     # Send answer to user that job started and save the message id for future updates
-    update_message = youtubesttbot.reply_to(message, "Transcribing video...")
+    update_message = youtubesttbot.reply_to(message, "Job started. Please wait for transcription to be completed.")
     # log type of update_message
     logger.info(f"update_message type: {type(update_message)}")
     # log update_message attributes
@@ -180,11 +180,11 @@ def youtubesttbot_message(message):
         "bot_token": youtubesttbot.token
     }
     
-    youtubesttbot.edit_message_text(
+    """youtubesttbot.edit_message_text(
         "Transcribing video...1", 
         chat_id=int(data["chat_id"]), 
         message_id=int(data["message_id"])
-        )
+        )"""
     
     headers = {
         "Content-Type": "application/json"
