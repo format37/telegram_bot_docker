@@ -151,7 +151,7 @@ bots.append(youtubesttbot)
 @youtubesttbot.message_handler(func=lambda message: True, content_types=['text'])
 def youtubesttbot_message(message):
 
-    if not message.text.startswith("https://www.youtube.com/watch") and not message.text.startswith("https://youtu.be/"):
+    if not message.text.startswith("https://www.youtube.com/") and not message.text.startswith("https://youtu.be/"):
         # youtubesttbot.reply_to(message, "Please send a YouTube video link to transcribe")
         return
 
