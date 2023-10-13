@@ -131,8 +131,8 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
         if limit_reached == False and token_counter(chat_gpt_prompt, model)<token_limit:            
             with open(file_name, "r") as f:
                 data = json.load(f)
-                if data["user_name"] == "assistant":
-                    role = "assistant"
+                if data["user_name"] == "bot":
+                    role = "bot"
                     chat_gpt_prompt.append({"role": role, "content": data["message"]})
                 else:
                     role = "user"
@@ -199,9 +199,9 @@ def call_message():
         result = openai_response['choices'][0]['message']['content']
         logger.info("result: {}".format(result))
         # Save the answer
-        save_message('assistant', 'assistant', chat_id, chat_type, result)
-        # Replace 'assistant: ' with ''
-        result = result.replace('assistant: ', '')
+        save_message('bot', 'bot', chat_id, chat_type, result)
+        # Replace 'bot: ' with ''
+        result = result.replace('bot: ', '')
 
     return jsonify({"result": result})
 
