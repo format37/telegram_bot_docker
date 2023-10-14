@@ -113,14 +113,16 @@ def read_latest_message(user_id, chat_id, chat_type):
     
 
 def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, model):
-    token_limit = 2000
-    chat_gpt_prompt = []
+    
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("read group chat")
         path = os.path.join("data", "groups", str(chat_id))
     else:
         logger.info("read private chat")
         path = os.path.join("data", "users", str(user_id))
+
+    chat_gpt_prompt = []
+    token_limit = 2000
 
     list_of_files = glob.glob(path + "/*.json")
     list_of_files.sort(key=os.path.getctime, reverse=True)
