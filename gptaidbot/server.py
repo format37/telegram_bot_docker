@@ -201,9 +201,9 @@ def call_message():
         result = openai_response['choices'][0]['message']['content']
         logger.info("result: {}".format(result))
         # Save the answer
-        save_message('bot', 'bot', chat_id, chat_type, result)
+        save_message('assistant', 'assistant', chat_id, chat_type, result)
         # Replace 'bot: ' with ''
-        result = result.replace('bot: ', '')
+        result = result.replace('assistant: ', '')
 
     return jsonify({"result": result})
 
