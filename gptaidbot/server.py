@@ -133,8 +133,8 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
         if limit_reached == False and token_counter(chat_gpt_prompt, model)<token_limit:            
             with open(file_name, "r") as f:
                 data = json.load(f)
-                if data["user_name"] == "bot":
-                    role = "bot"
+                if data["user_name"] == "assistant":
+                    role = "assistant"
                     chat_gpt_prompt.append({"role": role, "content": data["message"]})
                 else:
                     role = "user"
