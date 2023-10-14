@@ -154,6 +154,38 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
 
     return chat_gpt_prompt_original
 
+def delete_conversation_files(user_id, chat_id, chat_type):
+    if chat_type == 'group' or chat_type == 'supergroup':
+        logger.info("delete group chat")
+        # Create group id folder in the data path if not exist
+        path = os.path.join("data", "groups", str(chat_id))
+        # Get all files in folder
+        list_of_files = glob.glob(path + "/*.json")
+    else:
+        logger.info("delete private chat")
+        # Create user id folder in the data path if not exist
+        path = os.path.join("data", "users", str(user_id))
+        # Get all files in folder
+        list_of_files = glob.glob(path + "/*.json")
+
+    # Sort files by creation time ascending
+    list_of_files.sort(key=os.path.getctime)
+    # Delete all files except the last one
+    # for file_path in list_of_files[:-1]:
+    for file_path in list_of_files:
+        logger.info("delete file: "+file_path)
+        os.remove(file_path)
+
+@app.route("/reset", methods=["POST"])
+def call_reset():
+    r = request.get_json()
+    data = json.loads(r)
+    user_id = str(data['user_id'])
+    chat_id = str(data['chat_id'])
+    chat_type = str(data['chat_type'])    
+    delete_conversation_files(user_id, chat_id, chat_type)
+    return jsonify({"result": 'Reset done'})
+
 
 @app.route("/message", methods=["POST"])
 def call_message():

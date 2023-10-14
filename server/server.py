@@ -234,6 +234,20 @@ def send_start(message):
     gptaidbot.reply_to(message, ""+str(content.json()['result']))
 
 
+@gptaidbot.message_handler(commands=['reset'])
+def gptaidbot_call_reset(message):
+    logger.info("gptaidbot reset: "+str(message.from_user))
+    url = 'http://localhost:'+os.environ.get('GPTAIDBOT_PORT')+'/reset'
+    data = {
+        "user_id": message.from_user.id,
+        "chat_id": message.chat.id,
+        "chat_type": message.chat.type
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    gptaidbot.reply_to(message, ""+str(content.json()['result']))
+
+
 @gptaidbot.message_handler(func=lambda message: True, content_types=['text'])
 def send_message(message):
     url = 'http://localhost:' + str(os.environ.get('GPTAIDBOT_PORT')) + '/message'
