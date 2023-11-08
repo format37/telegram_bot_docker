@@ -122,7 +122,7 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
         path = os.path.join("data", "users", str(user_id))
 
     chat_gpt_prompt = []
-    token_limit = 2000
+    token_limit = 4000
 
     list_of_files = glob.glob(path + "/*.json")
     list_of_files.sort(key=os.path.getctime, reverse=True)
