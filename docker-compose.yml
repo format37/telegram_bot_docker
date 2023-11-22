@@ -81,7 +81,7 @@ services:
     environment:
       - TZ=Europe/Moscow
       - PORT=4202
-
+      - STRIPE_PROVIDER_TOKEN=your_token
   gptaidbot:
     volumes:
       - /etc/localtime:/etc/localtime:ro
