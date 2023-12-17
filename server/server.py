@@ -464,7 +464,7 @@ def calcubot_send_user(message):
         if reaction:
             reaction = calcubot_sequrity(message.text, message.from_user.id)
             if not reaction:
-                calcubot.reply_to(message, 'You are blocked')
+                calcubot.reply_to(message, 'You are blocked for a day')
 
         if reaction:
             try:
