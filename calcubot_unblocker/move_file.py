@@ -23,15 +23,20 @@ while True:
         os.makedirs(destination_directory)
 
     # Move the file
-    if os.path.exists(file_to_move):
-        shutil.move(file_to_move, destination_directory)
-        # print(f"File moved to {destination_directory}")
-        logger.info(f"File moved to {destination_directory}")
-        # Save a new empty file
-        open(file_to_move, 'a').close()
+    if os.path.exists(file_to_move) and \
+        not os.path.exists(os.path.join(destination_directory, file_to_move)):
+        logger.info(f"Moving file {file_to_move} to {destination_directory}")
+        # shutil.move(file_to_move, destination_directory)
+        # Copy the file
+        shutil.copy(file_to_move, destination_directory)
+        # Write emty string to file to avoid error
+        with open(file_to_move, 'w') as f:
+            f.write("")
+            logger.info(f"File moved to {destination_directory}")
+        # print(f"File moved to {destination_directory}")        
     else:
         # print("File not found.")
-        logger.info("File not found.")
+        logger.info("File not found or destination file already exists.")
 
     # Wait for one day (24 hours)
     time.sleep(86400)  # 86400 seconds in a day
