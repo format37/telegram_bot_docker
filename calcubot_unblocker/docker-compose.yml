@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  file_mover:
+    build: .
+    volumes:
+      - /root/projects/telegram_bot_docker/calcubot/blocked/archive:/archive
+      - /root/projects/telegram_bot_docker/calcubot/blocked/blocked.csv:/blocked.csv

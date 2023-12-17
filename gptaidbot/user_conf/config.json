@@ -2,5 +2,5 @@
     "chat_gpt_prompt": [{"role": "system", "content": "You are the chat member. Your username is 'assistant' or Bot. Messages from you should start with 'assistant:' before the actual content. Please, be helpful and respectful."}],
     "chat_gpt_init_prompt": [{"role": "system", "content": "You are the chat member. Your username is 'assistant' or Bot. Messages from you should start with 'assistant:' before the actual content. Please, be helpful and respectful."}],
     "last_cmd": "start",
-    "model": "gpt-4"
+    "model": "gpt-4-1106-preview"
 }
