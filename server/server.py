@@ -300,8 +300,11 @@ def send_inline(inline_query):
 calcubot = default_bot_init('CALCUBOT_TOKEN')
 bots.append(calcubot)
 
+# Global dictionary for blocked users
+calcubot_blocked_users = {}
 
-def read_blocked_csv(filename='calcubot_blocked/blocked.csv'):
+
+"""def read_blocked_csv(filename='calcubot_blocked/blocked.csv'):
     blocked_numbers = []
     if not os.path.exists(filename):
         # logger.info(f"{filename} does not exist.")
@@ -326,7 +329,45 @@ def add_to_blocked_csv(number, filename='calcubot_blocked/blocked.csv'):
         writer = csv.writer(file)
         writer.writerow([number])
     
-    logger.info(f"Added {number} to blocked.csv")
+    logger.info(f"Added {number} to blocked.csv")"""
+
+def add_to_blocked_csv(user_id):
+    """
+    Add a user to the blocked list and store the current datetime.
+    """
+    logger.info('add_to_blocked_csv')
+    current_time = dt.now()
+    calcubot_blocked_users[user_id] = current_time
+    logger.info(f"Added {user_id} to blocked list at {current_time}")
+
+def check_and_unblock_user(user_id):
+    """
+    Check if a user is blocked and if they have been blocked for more than a day.
+    Unblock the user if the blocking period has exceeded one day.
+    """
+    if user_id in calcubot_blocked_users:
+        blocked_time = calcubot_blocked_users[user_id]
+        current_time = dt.now()
+        if (current_time - blocked_time).total_seconds() > 86400:  # 24 hours in seconds
+            logger.info(f"Unblocking user: {user_id}")
+            del calcubot_blocked_users[user_id]
+            return True
+        else:
+            logger.info(f"User {user_id} is still blocked.")
+            return False
+    else:
+        return True
+
+def granted_user(user_id):
+    """
+    Check if a user is granted access or not.
+    """
+    user_id = int(user_id)
+    if check_and_unblock_user(user_id):
+        return True
+    else:
+        logger.info(f"Blocked user: {user_id}")
+        return False
 
 def calcubot_sequrity(request, user_id):
     # Check is request sequre:
@@ -337,7 +378,7 @@ def calcubot_sequrity(request, user_id):
     return True
 
 
-def granted_user(user_id):    
+"""def granted_user(user_id):    
     calcubot_blocked_users = read_blocked_csv()
     user_id = int(user_id)
     if user_id in calcubot_blocked_users:
@@ -345,7 +386,7 @@ def granted_user(user_id):
         return False
     else:
         # logger.info('Granted user: {}'.format(user_id))
-        return True
+        return True"""
 
 
 def collect_logs():
