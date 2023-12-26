@@ -145,7 +145,7 @@ def pplbackupbot_send_message(message):
 # === @pplbackupbot --
 
 # === youtubesttbot ++
-youtubesttbot = default_bot_init('YOUTUBESTTBOT_TOKEN')
+"""youtubesttbot = default_bot_init('YOUTUBESTTBOT_TOKEN')
 bots.append(youtubesttbot)
 
 @youtubesttbot.message_handler(func=lambda message: True, content_types=['text'])
@@ -183,12 +183,6 @@ def youtubesttbot_message(message):
         "bot_token": youtubesttbot.token
     }
     
-    """youtubesttbot.edit_message_text(
-        "Transcribing video...1", 
-        chat_id=int(data["chat_id"]), 
-        message_id=int(data["message_id"])
-        )"""
-    
     headers = {
         "Content-Type": "application/json"
     }
@@ -220,7 +214,7 @@ def youtubesttbot_message(message):
             )
         os.remove(filename)
     except Exception as e:
-        logger.error(e)
+        logger.error(e)"""
 # === youtubesttbot --
 
 # === @gptaidbot ++
